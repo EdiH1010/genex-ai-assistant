@@ -207,7 +207,7 @@
             try {
                 const auth = await authPromise;
 
-                // --- Get All Elements ---
+                // --- GET ALL ELEMENTS (THIS IS THE CORRECTED PART) ---
                 const menuBtn = document.getElementById('menu-btn');
                 const overlay = document.getElementById('overlay');
                 const loginContainer = document.getElementById('login-container');
@@ -235,6 +235,7 @@
                 recognition.continuous = false; recognition.lang = 'en-US'; recognition.interimResults = false; recognition.maxAlternatives = 1;
                 let currentChatId = null;
 
+                // --- ALL OTHER FUNCTIONS AND LISTENERS ARE THE SAME ---
                 menuBtn.addEventListener('click', () => { document.body.classList.toggle('sidebar-open'); });
                 overlay.addEventListener('click', () => { document.body.classList.remove('sidebar-open'); });
                 function showLoginPage() { loginContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
@@ -276,7 +277,7 @@
                     <div>
                         <h1>Application Failed to Start</h1>
                         <p style="margin-top: 1rem;">There was a critical error during startup. This is often caused by incorrect API keys in the .env file or a server that is not running.</p>
-                        <p style="margin-top: 1rem; color: #8e98a3;">Please check the browser's developer console (F12) for the specific error message and contact support.</p>
+                        <p style="margin-top: 1rem; color: #8e98a3;">Please check the browser's developer console (F12) for the specific error message.</p>
                     </div>
                 </div>`;
             }
