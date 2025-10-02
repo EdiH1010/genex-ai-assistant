@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(process.cwd(), '.env') });
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -36,10 +36,13 @@ app.post('/get-ai-response', async (req, res) => {
     if (!apiResponse.ok) { const errorData = await apiResponse.json(); return res.status(apiResponse.status).json(errorData); }
     const data = await apiResponse.json();
     res.status(200).json(data);
-  } catch (error) { res.status(500).json({ error: 'Internal Server Error' }); }
+  } catch (error) {
+    console.error("Error in /get-ai-response:", error);
+    res.status(500).json({ error: 'Internal Server Error' }); 
+  }
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}. Open http://localhost:5000 in your browser.`);
+  console.log(`Server is running on port ${PORT}. Open http://localhost:10000 in your browser.`);
 });
