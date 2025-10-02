@@ -38,22 +38,20 @@
         .login-btn.microsoft { border-color: var(--microsoft-blue); color: var(--microsoft-blue); }
         .login-btn.microsoft:hover { background-color: rgba(0, 164, 239, 0.1); }
         
-        .app-container { display: flex; height: 100%; position: relative; }
-        .sidebar { width: 250px; background-color: var(--sidebar-color); padding: 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); flex-shrink: 0; }
+        .app-container { display: flex; height: 100%; }
+        .sidebar { width: 250px; background-color: var(--sidebar-color); padding: 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
         .sidebar-header { display: flex; align-items: center; margin-bottom: 1rem; }
         .sidebar-header h2 { font-size: 1.5rem; margin-left: 0.75rem; }
         .sidebar .logo { font-size: 1.8rem; background: -webkit-linear-gradient(45deg, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         #new-chat-btn { width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: transparent; color: var(--text-primary); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; }
         #new-chat-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .recent-chats { flex-grow: 1; overflow-y: auto; }
+        .recent-chats { margin-bottom: auto; }
         .recent-chats h3 { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.5rem; padding: 0 0.5rem; }
-        #chat-history-list { list-style: none; }
+        #chat-history-list { list-style: none; overflow-y: auto; max-height: calc(100vh - 250px); }
         #chat-history-list li { padding: 0.6rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
         #chat-history-list li:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
         #chat-history-list li.active { background-color: var(--user-bubble-bg); color: var(--text-primary); font-weight: 500; }
-        
         .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
-        
         .profile-container { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 20; }
         #profile-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.8rem; cursor: pointer; padding: 0; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; transition: all 0.2s ease; }
         #profile-btn:hover { box-shadow: 0 0 0 4px var(--card-color); }
@@ -63,11 +61,6 @@
         .profile-dropdown .login-btn { width: calc(100% - 1rem); margin: 0.5rem; justify-content: flex-start; }
         #sign-out-btn { width: 100%; padding: 0.75rem; border: none; background-color: transparent; color: var(--text-secondary); font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; border-top: 1px solid var(--border-color); margin-top: 0.5rem; border-radius: 0; }
         #sign-out-btn:hover { color: #ff5252; }
-        
-        #menu-btn { display: none; position: absolute; top: 1.5rem; left: 1.5rem; z-index: 20; background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
-        body.sidebar-open .overlay { opacity: 1; pointer-events: auto; }
-
         .chat-view { flex-grow: 1; padding: 2rem 1.5rem; padding-top: 5rem; overflow-y: auto; display: flex; justify-content: center; }
         .chat-content-container { width: 100%; max-width: 800px; }
         .welcome-container { display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 5vh; }
@@ -100,13 +93,6 @@
         .input-area button:hover { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.1); }
         .mic-btn.listening { color: var(--accent-primary); animation: pulsate-mic 1.5s infinite; }
         @keyframes pulsate-mic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; left: 0; top: 0; height: 100%; z-index: 1000; transform: translateX(-100%); transition: transform 0.3s ease-in-out; border-right: 1px solid var(--border-color); }
-            body.sidebar-open .sidebar { transform: translateX(0); }
-            #menu-btn { display: block; }
-            .chat-header { display: none; }
-        }
     </style>
 </head>
 <body>
@@ -128,8 +114,6 @@
         </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-
     <div class="app-container hidden" id="app-container">
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -143,7 +127,6 @@
             </div>
         </aside>
         <main class="main-content">
-            <button id="menu-btn"><i class="fas fa-bars"></i></button>
             <div class="chat-header">
                 <div class="header-logo">
                     <i class="fas fa-brain logo"></i>
@@ -204,83 +187,102 @@
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const auth = await authPromise;
+            const auth = await authPromise;
 
-                // --- GET ALL ELEMENTS (THIS IS THE CORRECTED PART) ---
-                const menuBtn = document.getElementById('menu-btn');
-                const overlay = document.getElementById('overlay');
-                const loginContainer = document.getElementById('login-container');
-                const appContainer = document.getElementById('app-container');
-                const guestLoginBtn = document.getElementById('guest-login-btn');
-                const googleLoginBtnMain = document.getElementById('google-login-btn-main');
-                const microsoftLoginBtnMain = document.getElementById('microsoft-login-btn-main');
-                const profileContainer = document.getElementById('profile-container');
-                const profileBtn = document.getElementById('profile-btn');
-                const profileDropdown = document.getElementById('profile-dropdown');
-                const googleLoginBtnDropdown = document.getElementById('google-login-btn-dropdown');
-                const microsoftLoginBtnDropdown = document.getElementById('microsoft-login-btn-dropdown');
-                const signOutBtn = document.getElementById('sign-out-btn');
-                const userNameSpan = document.getElementById('user-name');
-                const micBtn = document.getElementById('mic-btn');
-                const commandInput = document.getElementById('command-input');
-                const welcomeContainer = document.getElementById('welcome-container');
-                const chatHistory = document.getElementById('chat-history');
-                const suggestionCards = document.querySelector('.suggestion-cards');
-                const chatView = document.getElementById('chat-view');
-                const newChatBtn = document.getElementById('new-chat-btn');
-                const chatHistoryList = document.getElementById('chat-history-list');
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
-                recognition.continuous = false; recognition.lang = 'en-US'; recognition.interimResults = false; recognition.maxAlternatives = 1;
-                let currentChatId = null;
+            // --- Get All Elements ---
+            const loginContainer = document.getElementById('login-container');
+            const appContainer = document.getElementById('app-container');
+            const guestLoginBtn = document.getElementById('guest-login-btn');
+            const googleLoginBtnMain = document.getElementById('google-login-btn-main');
+            const microsoftLoginBtnMain = document.getElementById('microsoft-login-btn-main');
+            const profileContainer = document.getElementById('profile-container');
+            const profileBtn = document.getElementById('profile-btn');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            const googleLoginBtnDropdown = document.getElementById('google-login-btn-dropdown');
+            const microsoftLoginBtnDropdown = document.getElementById('microsoft-login-btn-dropdown');
+            const signOutBtn = document.getElementById('sign-out-btn');
+            const userNameSpan = document.getElementById('user-name');
+            const micBtn = document.getElementById('mic-btn');
+            const commandInput = document.getElementById('command-input');
+            const welcomeContainer = document.getElementById('welcome-container');
+            const chatHistory = document.getElementById('chat-history');
+            const suggestionCards = document.querySelector('.suggestion-cards');
+            const chatView = document.getElementById('chat-view');
+            const newChatBtn = document.getElementById('new-chat-btn');
+            const chatHistoryList = document.getElementById('chat-history-list');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false; recognition.lang = 'en-US'; recognition.interimResults = false; recognition.maxAlternatives = 1;
+            
+            let currentChatId = null;
 
-                // --- ALL OTHER FUNCTIONS AND LISTENERS ARE THE SAME ---
-                menuBtn.addEventListener('click', () => { document.body.classList.toggle('sidebar-open'); });
-                overlay.addEventListener('click', () => { document.body.classList.remove('sidebar-open'); });
-                function showLoginPage() { loginContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
-                function showChatApp(userName) { loginContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); userNameSpan.textContent = userName; renderSidebar(); }
-                onAuthStateChanged(auth, user => { if (user) { const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User"); showChatApp(displayName); if (user.photoURL) { profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile Picture">`; } else { profileBtn.innerHTML = `<i class="fas fa-user-circle"></i>`; } googleLoginBtnDropdown.classList.add('hidden'); microsoftLoginBtnDropdown.classList.add('hidden'); signOutBtn.classList.remove('hidden'); } else { showLoginPage(); profileBtn.innerHTML = `<i class="fas fa-user-circle"></i>`; googleLoginBtnDropdown.classList.remove('hidden'); microsoftLoginBtnDropdown.classList.remove('hidden'); signOutBtn.classList.add('hidden'); } });
-                getRedirectResult(auth).catch((error) => console.error("Error getting redirect result:", error));
-                const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
-                const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithRedirect(auth, provider); };
-                googleLoginBtnMain.addEventListener('click', signInWithGoogle);
-                googleLoginBtnDropdown.addEventListener('click', signInWithGoogle);
-                microsoftLoginBtnMain.addEventListener('click', signInWithMicrosoft);
-                microsoftLoginBtnDropdown.addEventListener('click', signInWithMicrosoft);
-                guestLoginBtn.addEventListener('click', () => { signInAnonymously(auth).catch(error => console.error("Guest sign-in error", error)); });
-                signOutBtn.addEventListener('click', () => { signOut(auth).catch(error => console.error("Sign out error", error)); });
-                function getChats() { const user = auth.currentUser; if (!user) return []; return JSON.parse(localStorage.getItem(`genexChats_${user.uid}`) || '[]'); }
-                function saveChats(chats) { const user = auth.currentUser; if (!user) return; localStorage.setItem(`genexChats_${user.uid}`, JSON.stringify(chats)); }
-                function renderSidebar() { const chats = getChats(); chatHistoryList.innerHTML = ''; chats.slice().reverse().forEach(chat => { const li = document.createElement('li'); li.textContent = chat.title; li.dataset.chatId = chat.id; if (chat.id === currentChatId) li.classList.add('active'); chatHistoryList.appendChild(li); }); }
-                function renderChat(chatId) { const chats = getChats(); const chat = chats.find(c => c.id === chatId); if (!chat) return; switchToChatView(false); chatHistory.innerHTML = ''; chat.messages.forEach(msg => appendMessage(msg.sender, msg.text, false)); currentChatId = chatId; renderSidebar(); document.body.classList.remove('sidebar-open'); }
-                function switchToChatView(speakWelcome = true) { if (!welcomeContainer.classList.contains('hidden')) { welcomeContainer.classList.add('hidden'); chatHistory.classList.remove('hidden'); if (speakWelcome) { const user = auth.currentUser; const userName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User"); talk(`Hello ${userName}, I am Genex, online and ready.`); } } }
-                function switchToWelcomeView() { currentChatId = null; chatHistory.innerHTML = ''; welcomeContainer.classList.remove('hidden'); chatHistory.classList.add('hidden'); renderSidebar(); document.body.classList.remove('sidebar-open'); }
-                function talk(text) { appendMessage('Genex', text); const utterance = new SpeechSynthesisUtterance(text); window.speechSynthesis.speak(utterance); }
-                function getUserLocation() { return new Promise((resolve) => { if (!navigator.geolocation) { resolve(null); } else { navigator.geolocation.getCurrentPosition( (position) => { resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude }); }, () => { resolve(null); } ); } }); }
-                function appendMessage(sender, text, save = true) { const user = auth.currentUser; const senderName = sender === 'User' ? (user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User")) : 'Genex'; const messageDiv = document.createElement('div'); messageDiv.classList.add('chat-message', sender === 'User' ? 'user-message' : 'genex-message'); const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = senderName; const contentP = document.createElement('p'); contentP.classList.add('message-content'); contentP.textContent = text; messageDiv.appendChild(senderP); messageDiv.appendChild(contentP); chatHistory.appendChild(messageDiv); chatView.scrollTop = chatView.scrollHeight; if (save && currentChatId) { const chats = getChats(); const chat = chats.find(c => c.id === currentChatId); if (chat) { const isFirstUserMessage = chat.messages.filter(m => m.sender === 'User').length === 0; if(isFirstUserMessage && sender === 'User') { chat.title = text.length > 25 ? text.substring(0, 25) + '...' : text; } chat.messages.push({ sender, text }); saveChats(chats); if (isFirstUserMessage && sender === 'User') { renderSidebar(); } } } }
-                function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
-                function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
-                async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await getUserLocation(); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages .map(msg => ({ role: msg.sender === 'User' ? 'model', parts: [{ text: msg.text }] })) .slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
-                micBtn.addEventListener('click', () => recognition.start());
-                commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
-                suggestionCards.addEventListener('click', e => { const card = e.target.closest('.card'); if (card) run_genex(card.dataset.prompt); });
-                newChatBtn.addEventListener('click', () => {switchToWelcomeView()});
-                chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) renderChat(li.dataset.chatId); });
-                recognition.onstart = () => micBtn.classList.add('listening');
-                recognition.onend = () => micBtn.classList.remove('listening');
-                recognition.onerror = e => console.error('Speech recognition error:', e.error);
-                recognition.onresult = e => { const originalTranscript = e.results[0][0].transcript; const correctedTranscript = originalTranscript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); run_genex(correctedTranscript); };
-            } catch (error) {
-                console.error("A critical error occurred during app initialization:", error);
-                document.body.innerHTML = `<div style="color: #ff8a8a; background-color: #131314; height: 100%; display: flex; justify-content: center; align-items: center; text-align: center; padding: 2rem; font-family: 'Inter', sans-serif;">
-                    <div>
-                        <h1>Application Failed to Start</h1>
-                        <p style="margin-top: 1rem;">There was a critical error during startup. This is often caused by incorrect API keys in the .env file or a server that is not running.</p>
-                        <p style="margin-top: 1rem; color: #8e98a3;">Please check the browser's developer console (F12) for the specific error message.</p>
-                    </div>
-                </div>`;
+            // --- Login / Logout Logic ---
+            function showLoginPage() {
+                loginContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
             }
+            function showChatApp(userName) {
+                loginContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                userNameSpan.textContent = userName;
+                renderSidebar();
+            }
+            
+            onAuthStateChanged(auth, user => {
+                if (user) {
+                    const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User");
+                    showChatApp(displayName);
+                    if (user.photoURL) {
+                        profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile Picture">`;
+                    } else {
+                        profileBtn.innerHTML = `<i class="fas fa-user-circle"></i>`;
+                    }
+                    googleLoginBtnDropdown.classList.add('hidden');
+                    microsoftLoginBtnDropdown.classList.add('hidden');
+                    signOutBtn.classList.remove('hidden');
+                } else {
+                    showLoginPage();
+                    profileBtn.innerHTML = `<i class="fas fa-user-circle"></i>`;
+                    googleLoginBtnDropdown.classList.remove('hidden');
+                    microsoftLoginBtnDropdown.classList.remove('hidden');
+                    signOutBtn.classList.add('hidden');
+                }
+            });
+
+            getRedirectResult(auth).catch((error) => console.error("Error getting redirect result:", error));
+
+            const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
+            const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithRedirect(auth, provider); };
+            
+            googleLoginBtnMain.addEventListener('click', signInWithGoogle);
+            googleLoginBtnDropdown.addEventListener('click', signInWithGoogle);
+            microsoftLoginBtnMain.addEventListener('click', signInWithMicrosoft);
+            microsoftLoginBtnDropdown.addEventListener('click', signInWithMicrosoft);
+            guestLoginBtn.addEventListener('click', () => { signInAnonymously(auth).catch(error => console.error("Guest sign-in error", error)); });
+            signOutBtn.addEventListener('click', () => { signOut(auth).catch(error => console.error("Sign out error", error)); });
+            
+            // --- Chat & Recognition Functions ---
+            recognition.onstart = () => micBtn.classList.add('listening');
+            recognition.onend = () => micBtn.classList.remove('listening');
+            
+            function getChats() { const user = auth.currentUser; if (!user) return []; return JSON.parse(localStorage.getItem(`genexChats_${user.uid}`) || '[]'); }
+            function saveChats(chats) { const user = auth.currentUser; if (!user) return; localStorage.setItem(`genexChats_${user.uid}`, JSON.stringify(chats)); }
+            function renderSidebar() { const chats = getChats(); chatHistoryList.innerHTML = ''; chats.slice().reverse().forEach(chat => { const li = document.createElement('li'); li.textContent = chat.title; li.dataset.chatId = chat.id; if (chat.id === currentChatId) li.classList.add('active'); chatHistoryList.appendChild(li); }); }
+            function renderChat(chatId) { const chats = getChats(); const chat = chats.find(c => c.id === chatId); if (!chat) return; switchToChatView(false); chatHistory.innerHTML = ''; chat.messages.forEach(msg => appendMessage(msg.sender, msg.text, false)); currentChatId = chatId; renderSidebar(); }
+            function switchToChatView(speakWelcome = true) { if (!welcomeContainer.classList.contains('hidden')) { welcomeContainer.classList.add('hidden'); chatHistory.classList.remove('hidden'); if (speakWelcome) { const user = auth.currentUser; const userName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User"); talk(`Hello ${userName}, I am Genex, online and ready.`); } } }
+            function switchToWelcomeView() { currentChatId = null; chatHistory.innerHTML = ''; welcomeContainer.classList.remove('hidden'); chatHistory.classList.add('hidden'); renderSidebar(); }
+            function talk(text) { appendMessage('Genex', text); const utterance = new SpeechSynthesisUtterance(text); window.speechSynthesis.speak(utterance); }
+            function getUserLocation() { return new Promise((resolve) => { if (!navigator.geolocation) { resolve(null); } else { navigator.geolocation.getCurrentPosition( (position) => { resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude }); }, () => { resolve(null); } ); } }); }
+            function appendMessage(sender, text, save = true) { const user = auth.currentUser; const senderName = sender === 'User' ? (user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User")) : 'Genex'; const messageDiv = document.createElement('div'); messageDiv.classList.add('chat-message', sender === 'User' ? 'user-message' : 'genex-message'); const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = senderName; const contentP = document.createElement('p'); contentP.classList.add('message-content'); contentP.textContent = text; messageDiv.appendChild(senderP); messageDiv.appendChild(contentP); chatHistory.appendChild(messageDiv); chatView.scrollTop = chatView.scrollHeight; if (save && currentChatId) { const chats = getChats(); const chat = chats.find(c => c.id === currentChatId); if (chat) { const isFirstUserMessage = chat.messages.filter(m => m.sender === 'User').length === 0; if(isFirstUserMessage && sender === 'User') { chat.title = text.length > 25 ? text.substring(0, 25) + '...' : text; } chat.messages.push({ sender, text }); saveChats(chats); if (isFirstUserMessage && sender === 'User') { renderSidebar(); } } } }
+            function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
+            function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
+            async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await getUserLocation(); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages .map(msg => ({ role: msg.sender === 'User' ? 'user' : 'model', parts: [{ text: msg.text }] })) .slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
+            micBtn.addEventListener('click', () => recognition.start());
+            commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
+            suggestionCards.addEventListener('click', e => { const card = e.target.closest('.card'); if (card) run_genex(card.dataset.prompt); });
+            newChatBtn.addEventListener('click', switchToWelcomeView);
+            chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) renderChat(li.dataset.chatId); });
+            recognition.onresult = e => { const originalTranscript = e.results[0][0].transcript; const correctedTranscript = originalTranscript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); run_genex(correctedTranscript); };
         });
     </script>
 </body>
