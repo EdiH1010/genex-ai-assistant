@@ -70,7 +70,7 @@
         .suggestion-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 3rem; width: 100%; }
         .card { background-color: var(--card-color); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s ease; font-size: 0.95rem; font-weight: 500; text-align: left; }
         .card:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .chat-header { position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; }
+        .chat-header { position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; display: flex; align-items: center; }
         .header-logo { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; font-weight: 500; }
         .header-logo .logo { font-size: 1.2rem; }
         .chat-history { width: 100%; display: flex; flex-direction: column; }
@@ -93,6 +93,70 @@
         .input-area button:hover { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.1); }
         .mic-btn.listening { color: var(--accent-primary); animation: pulsate-mic 1.5s infinite; }
         @keyframes pulsate-mic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- STYLES FOR SLIDING SIDEBAR --- */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-toggle-btn {
+            display: block;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            padding: 0.5rem;
+            z-index: 15;
+        }
+
+        /* Mobile-first: Sidebar is hidden off-screen by default */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Media Query for Desktop Screens */
+        @media (min-width: 768px) {
+            .menu-toggle-btn {
+                display: none;
+            }
+
+            .sidebar {
+                position: static;
+                transform: none;
+                height: auto;
+                z-index: auto;
+            }
+
+            .sidebar-overlay {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -115,7 +179,7 @@
     </div>
 
     <div class="app-container hidden" id="app-container">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-brain logo"></i>
                 <h2>Genex.ai</h2>
@@ -126,8 +190,14 @@
                 <ul id="chat-history-list"></ul>
             </div>
         </aside>
+
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <main class="main-content">
             <div class="chat-header">
+                <button class="menu-toggle-btn" id="menu-toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="header-logo">
                     <i class="fas fa-brain logo"></i>
                     <span>Genex.ai</span>
@@ -174,7 +244,9 @@
     </div>
 
     <script type="module">
-        import { authPromise } from './firebase-config.js';
+        // Ensure you have a 'firebase-config.js' file in the same directory
+        // with your Firebase app initialization for this to work.
+        import { authPromise } from './firebase-config.js'; 
         import { 
             onAuthStateChanged, 
             signInWithPopup,
@@ -210,6 +282,9 @@
             const chatView = document.getElementById('chat-view');
             const newChatBtn = document.getElementById('new-chat-btn');
             const chatHistoryList = document.getElementById('chat-history-list');
+            const sidebar = document.getElementById('sidebar');
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             recognition.continuous = false; recognition.lang = 'en-US'; recognition.interimResults = false; recognition.maxAlternatives = 1;
@@ -277,11 +352,38 @@
             function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
             function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
             async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await getUserLocation(); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages .map(msg => ({ role: msg.sender === 'User' ? 'user' : 'model', parts: [{ text: msg.text }] })) .slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
+            
+            // --- SIDEBAR EVENT LISTENERS ---
+            function openSidebar() {
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('active');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+            }
+
+            menuToggleBtn.addEventListener('click', openSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            
+            // --- GENERAL EVENT LISTENERS ---
             micBtn.addEventListener('click', () => recognition.start());
             commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
             suggestionCards.addEventListener('click', e => { const card = e.target.closest('.card'); if (card) run_genex(card.dataset.prompt); });
-            newChatBtn.addEventListener('click', switchToWelcomeView);
-            chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) renderChat(li.dataset.chatId); });
+            newChatBtn.addEventListener('click', () => {
+                switchToWelcomeView();
+                closeSidebar();
+            });
+            chatHistoryList.addEventListener('click', e => { 
+                const li = e.target.closest('li'); 
+                if (li && li.dataset.chatId) {
+                    renderChat(li.dataset.chatId);
+                    if (window.innerWidth < 768) {
+                        closeSidebar();
+                    }
+                }
+            });
             recognition.onresult = e => { const originalTranscript = e.results[0][0].transcript; const correctedTranscript = originalTranscript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); run_genex(correctedTranscript); };
         });
     </script>
