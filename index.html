@@ -107,7 +107,7 @@
             .sidebar-overlay { display: none; }
         }
 
-        /* --- ADDED: STYLES FOR MARKDOWN AND CODE BLOCKS --- */
+        /* --- STYLES FOR MARKDOWN AND CODE BLOCKS --- */
         .message-content p { margin-bottom: 0.5rem; }
         .message-content p:last-child { margin-bottom: 0; }
         .message-content ul, .message-content ol { padding-left: 1.5rem; margin-bottom: 0.5rem; }
@@ -116,6 +116,190 @@
         .message-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: var(--text-primary); }
         .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--border-color); color: var(--text-secondary); border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; opacity: 0.7; transition: all 0.2s ease; }
         .copy-btn:hover { opacity: 1; background-color: var(--accent-primary); color: var(--bg-color); }
+
+        /* --- ADDED: Settings Button in Sidebar Footer --- */
+        .sidebar-footer-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: auto; /* Pushes it to the bottom */
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .sidebar-footer-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        .sidebar-footer-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* --- ADDED: Settings Modal/Dropdown --- */
+        .settings-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 450px;
+            max-height: 80vh;
+            overflow: hidden; /* To handle submenu sliding */
+            z-index: 1000;
+            display: flex; /* For internal layout of main menu and submenus */
+            flex-direction: column;
+            
+            /* Add this for smoother transition of the whole modal */
+            opacity: 1; 
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .settings-modal.hidden {
+            opacity: 0;
+            pointer-events: none; /* Make it unclickable when hidden */
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .settings-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .settings-header button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+        .settings-header button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .settings-options {
+            list-style: none;
+            padding: 1rem 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .settings-options li {
+            margin: 0;
+        }
+        .settings-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        .settings-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .settings-link i.fas:first-child { /* Icon on the left */
+            margin-right: 1rem;
+            width: 1.2rem; /* Ensure consistent spacing */
+            text-align: center;
+        }
+        .submenu-arrow {
+            margin-left: auto;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- VOICES SUBMENU STYLES --- */
+        .voices-submenu {
+            position: absolute;
+            top: 0;
+            left: 100%; /* Initially off-screen to the right */
+            width: 100%;
+            height: 100%;
+            background-color: var(--card-color);
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .voices-submenu.active {
+            left: 0; /* Slide into view */
+        }
+
+        .voices-submenu .settings-header {
+            justify-content: flex-start; /* Align back button and title */
+        }
+        .voices-submenu .settings-header button {
+            margin-right: 1rem;
+        }
+
+        .voices-list {
+            list-style: none;
+            padding: 1rem 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .voice-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid var(--border-color); /* Separator */
+        }
+        .voice-option:last-child {
+            border-bottom: none;
+        }
+        .voice-option:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .voice-option.selected {
+            background-color: var(--user-bubble-bg);
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+        .voice-option .voice-name {
+            flex-grow: 1;
+        }
+        .voice-option .play-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        .voice-option .play-btn:hover {
+            color: var(--accent-primary);
+            background-color: rgba(138, 180, 248, 0.1);
+        }
+        .voice-option.selected .play-btn {
+            color: var(--accent-primary);
+        }
     </style>
 </head>
 <body>
@@ -142,6 +326,7 @@
                 <h3>Recent</h3>
                 <ul id="chat-history-list"></ul>
             </div>
+            <button id="settings-btn" class="sidebar-footer-btn"><i class="fas fa-cog"></i> Settings</button>
         </aside>
 
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -185,8 +370,34 @@
         </main>
     </div>
 
+    <div class="settings-modal hidden" id="settings-modal">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button id="close-settings-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="settings-options">
+            <li><a href="#" class="settings-link"><i class="fas fa-history"></i> Activity</a></li>
+            <li><a href="#" class="settings-link"><i class="fas fa-save"></i> Saved info</a></li>
+            <li><a href="#" class="settings-link"><i class="fas fa-link"></i> Connected apps</a></li>
+            <li><a href="#" class="settings-link"><i class="fas fa-calendar-alt"></i> Scheduled actions</a></li>
+            <li><a href="#" class="settings-link"><i class="fas fa-share-alt"></i> Your public links</a></li>
+            <li class="has-submenu" id="voices-menu-item">
+                <a href="#" class="settings-link"><i class="fas fa-volume-up"></i> Voices <i class="fas fa-chevron-right submenu-arrow"></i></a>
+            </li>
+            <li><a href="#" class="settings-link"><i class="fas fa-palette"></i> Theme <i class="fas fa-chevron-right submenu-arrow"></i></a></li>
+        </ul>
+
+        <div class="voices-submenu hidden" id="voices-submenu">
+            <div class="settings-header">
+                <button id="back-to-settings-btn"><i class="fas fa-chevron-left"></i></button>
+                <h3>Voices</h3>
+            </div>
+            <ul class="voices-list" id="voices-list">
+                </ul>
+        </div>
+    </div>
+
     <script type="module">
-        // Ensure you have a 'firebase-config.js' file in the same directory
         import { authPromise } from './firebase-config.js'; 
         import { 
             onAuthStateChanged, 
@@ -224,6 +435,15 @@
             const menuToggleBtn = document.getElementById('menu-toggle-btn');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             
+            // --- ADDED: Settings & Voice elements ---
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const closeSettingsBtn = document.getElementById('close-settings-btn');
+            const voicesMenuItem = document.getElementById('voices-menu-item');
+            const voicesSubmenu = document.getElementById('voices-submenu');
+            const backToSettingsBtn = document.getElementById('back-to-settings-btn');
+            const voicesList = document.getElementById('voices-list');
+
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             recognition.continuous = false; 
@@ -233,6 +453,10 @@
             
             let currentChatId = null;
             let isListening = false;
+
+            // --- ADDED: Voice State Variables ---
+            let availableVoices = [];
+            let selectedVoiceURI = localStorage.getItem('genexSelectedVoiceURI') || ''; // Store selected voice URI
 
             // --- Login / Logout Logic ---
             function showLoginPage() {
@@ -285,9 +509,22 @@
             function renderChat(chatId) { const chat = getChats().find(c => c.id === chatId); if (!chat) return; switchToChatView(false); chatHistory.innerHTML = ''; chat.messages.forEach(msg => appendMessage(msg.sender, msg.text, false)); currentChatId = chatId; renderSidebar(); }
             function switchToChatView(speakWelcome = true) { if (!welcomeContainer.classList.contains('hidden')) { welcomeContainer.classList.add('hidden'); chatHistory.classList.remove('hidden'); if (speakWelcome && auth.currentUser) { const userName = auth.currentUser.isAnonymous ? "Guest" : (auth.currentUser.displayName ? auth.currentUser.displayName.split(' ')[0] : "User"); talk(`Hello ${userName}, I am Genex, online and ready.`); } } }
             function switchToWelcomeView() { currentChatId = null; chatHistory.innerHTML = ''; welcomeContainer.classList.remove('hidden'); chatHistory.classList.add('hidden'); renderSidebar(); }
-            function talk(text) { appendMessage('Genex', text); const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, ''); const utterance = new SpeechSynthesisUtterance(cleanedText); window.speechSynthesis.speak(utterance); }
             
-            // --- UPDATED: appendMessage function to handle Markdown and code blocks ---
+            // --- UPDATED: talk() function to use selected voice ---
+            function talk(text) {
+                appendMessage('Genex', text);
+                const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, ''); 
+                const utterance = new SpeechSynthesisUtterance(cleanedText);
+                
+                // Set the selected voice if available
+                const selectedVoice = availableVoices.find(voice => voice.voiceURI === selectedVoiceURI);
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
+
             function appendMessage(sender, text, save = true) {
                 const user = auth.currentUser;
                 const senderName = sender === 'User' ? (user?.isAnonymous ? "Guest" : (user?.displayName ? user.displayName.split(' ')[0] : "User")) : 'Genex';
@@ -327,7 +564,6 @@
                 }
             }
 
-            // --- ADDED: New function to add copy buttons to code blocks ---
             function enhanceCodeBlocks(container) {
                 const codeBlocks = container.querySelectorAll('pre');
                 codeBlocks.forEach(pre => {
@@ -346,21 +582,120 @@
                 });
             }
 
-            function showLoadingIndicator() { /* ... same as before ... */ }
-            function removeLoadingIndicator() { /* ... same as before ... */ }
-            async function run_genex(command) { /* ... same as before, no changes needed here ... */ }
-            
-            // --- Re-add the original functions that were accidentally removed in summarization ---
             function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
             function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
-            async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await (new Promise(r => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => r({lat:p.coords.latitude, lon:p.coords.longitude}),()=>r(null)) : r(null))); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages.map(msg => ({ role: msg.sender === 'User' ? 'user' : 'model', parts: [{ text: msg.text }] })).slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
+            async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await (new Promise(r => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => r({lat:p.coords.latitude, lon:p.coords.longitude}),()=>r(null)) : r(null))); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages.map(msg => ({ role: msg.sender === 'User' ? 'user', parts: [{ text: msg.text }] })).slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
             
-            // --- SIDEBAR EVENT LISTENERS ---
+            // --- Voice Management Functions ---
+            function populateVoices() {
+                availableVoices = window.speechSynthesis.getVoices();
+                voicesList.innerHTML = ''; // Clear existing list
+
+                const englishVoices = availableVoices.filter(voice => voice.lang.startsWith('en'));
+                
+                const preferredVoiceNames = [
+                    "Google US English", "Microsoft Zira - English (United States)",
+                    "Microsoft David - English (United States)", "Google UK English Female", "Google UK English Male"
+                ];
+
+                let displayedVoices = [];
+
+                preferredVoiceNames.forEach(name => {
+                    const voice = englishVoices.find(v => v.name === name);
+                    if (voice && !displayedVoices.some(v => v.name === voice.name)) {
+                        displayedVoices.push(voice);
+                    }
+                });
+
+                for (const voice of englishVoices) {
+                    if (displayedVoices.length >= 6) break;
+                    if (!displayedVoices.some(v => v.name === voice.name)) {
+                        displayedVoices.push(voice);
+                    }
+                }
+
+                if (displayedVoices.length === 0 && englishVoices.length > 0) {
+                    displayedVoices = englishVoices.slice(0, Math.min(englishVoices.length, 6));
+                }
+
+                if (!selectedVoiceURI && displayedVoices.length > 0) {
+                    selectedVoiceURI = displayedVoices[0].voiceURI;
+                    localStorage.setItem('genexSelectedVoiceURI', selectedVoiceURI);
+                }
+
+                displayedVoices.forEach(voice => {
+                    const li = document.createElement('li');
+                    li.classList.add('voice-option');
+                    li.dataset.voiceUri = voice.voiceURI;
+                    
+                    if (voice.voiceURI === selectedVoiceURI) {
+                        li.classList.add('selected');
+                    }
+
+                    const voiceNameSpan = document.createElement('span');
+                    voiceNameSpan.classList.add('voice-name');
+                    voiceNameSpan.textContent = `${voice.name} (${voice.lang})`;
+                    li.appendChild(voiceNameSpan);
+
+                    const playBtn = document.createElement('button');
+                    playBtn.classList.add('play-btn');
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    playBtn.title = 'Listen to sample';
+                    li.appendChild(playBtn);
+
+                    voicesList.appendChild(li);
+
+                    playBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const sampleText = "Hello, I am Genex. This is a sample of my voice.";
+                        const utterance = new SpeechSynthesisUtterance(sampleText);
+                        utterance.voice = voice;
+                        window.speechSynthesis.speak(utterance);
+                    });
+
+                    li.addEventListener('click', () => {
+                        const currentSelected = voicesList.querySelector('.voice-option.selected');
+                        if (currentSelected) {
+                            currentSelected.classList.remove('selected');
+                        }
+                        li.classList.add('selected');
+                        selectedVoiceURI = voice.voiceURI;
+                        localStorage.setItem('genexSelectedVoiceURI', selectedVoiceURI);
+                        console.log("Selected voice:", voice.name);
+                    });
+                });
+            }
+
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = populateVoices;
+            }
+            populateVoices(); // Call it once initially too
+
+
+            // --- SIDEBAR & SETTINGS EVENT LISTENERS ---
             function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
             function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
             menuToggleBtn.addEventListener('click', openSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
             
+            settingsBtn.addEventListener('click', () => {
+                settingsModal.classList.remove('hidden');
+                voicesSubmenu.classList.remove('active'); // Ensure voices submenu is hidden initially
+            });
+
+            closeSettingsBtn.addEventListener('click', () => {
+                settingsModal.classList.add('hidden');
+            });
+
+            voicesMenuItem.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                voicesSubmenu.classList.add('active');
+            });
+
+            backToSettingsBtn.addEventListener('click', () => {
+                voicesSubmenu.classList.remove('active');
+            });
+
             // --- GENERAL EVENT LISTENERS ---
             micBtn.addEventListener('click', () => { if (isListening) { recognition.stop(); } else { try { recognition.start(); } catch(e) { console.error("Could not start recognition:", e); isListening = false; micBtn.classList.remove('listening'); } } });
             commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
