@@ -48,7 +48,7 @@
         #new-chat-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
         .recent-chats { margin-bottom: auto; }
         .recent-chats h3 { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.5rem; padding: 0 0.5rem; }
-        #chat-history-list { list-style: none; overflow-y: auto; max-height: calc(100vh - 250px); }
+        #chat-history-list { list-style: none; overflow-y: auto; max-height: calc(100vh - 300px); }
         #chat-history-list li { padding: 0.6rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
         #chat-history-list li:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
         #chat-history-list li.active { background-color: var(--user-bubble-bg); color: var(--text-primary); font-weight: 500; }
@@ -121,7 +121,7 @@
         .sidebar-footer-btn {
             width: 100%;
             padding: 0.75rem;
-            margin-top: auto; /* Pushes it to the bottom */
+            margin-top: 1.5rem; 
             border-radius: 8px;
             border: 1px solid var(--border-color);
             background-color: transparent;
@@ -156,19 +156,18 @@
             width: 90%;
             max-width: 450px;
             max-height: 80vh;
-            overflow: hidden; /* To handle submenu sliding */
+            overflow: hidden; 
             z-index: 1000;
-            display: flex; /* For internal layout of main menu and submenus */
+            display: flex; 
             flex-direction: column;
-            
-            /* Add this for smoother transition of the whole modal */
             opacity: 1; 
-            transition: opacity 0.2s ease-in-out;
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
         }
 
         .settings-modal.hidden {
             opacity: 0;
-            pointer-events: none; /* Make it unclickable when hidden */
+            transform: translate(-50%, -48%);
+            pointer-events: none; 
         }
 
         .settings-header {
@@ -219,9 +218,9 @@
         .settings-link:hover {
             background-color: rgba(255, 255, 255, 0.05);
         }
-        .settings-link i.fas:first-child { /* Icon on the left */
+        .settings-link i.fas:first-child { 
             margin-right: 1rem;
-            width: 1.2rem; /* Ensure consistent spacing */
+            width: 1.2rem;
             text-align: center;
         }
         .submenu-arrow {
@@ -234,7 +233,7 @@
         .voices-submenu {
             position: absolute;
             top: 0;
-            left: 100%; /* Initially off-screen to the right */
+            left: 100%; 
             width: 100%;
             height: 100%;
             background-color: var(--card-color);
@@ -244,11 +243,11 @@
         }
 
         .voices-submenu.active {
-            left: 0; /* Slide into view */
+            left: 0;
         }
 
         .voices-submenu .settings-header {
-            justify-content: flex-start; /* Align back button and title */
+            justify-content: flex-start;
         }
         .voices-submenu .settings-header button {
             margin-right: 1rem;
@@ -267,7 +266,7 @@
             color: var(--text-primary);
             cursor: pointer;
             transition: background-color 0.2s ease;
-            border-bottom: 1px solid var(--border-color); /* Separator */
+            border-bottom: 1px solid var(--border-color);
         }
         .voice-option:last-child {
             border-bottom: none;
@@ -387,7 +386,7 @@
             <li><a href="#" class="settings-link"><i class="fas fa-palette"></i> Theme <i class="fas fa-chevron-right submenu-arrow"></i></a></li>
         </ul>
 
-        <div class="voices-submenu hidden" id="voices-submenu">
+        <div class="voices-submenu" id="voices-submenu">
             <div class="settings-header">
                 <button id="back-to-settings-btn"><i class="fas fa-chevron-left"></i></button>
                 <h3>Voices</h3>
@@ -434,8 +433,6 @@
             const sidebar = document.getElementById('sidebar');
             const menuToggleBtn = document.getElementById('menu-toggle-btn');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
-            
-            // --- ADDED: Settings & Voice elements ---
             const settingsBtn = document.getElementById('settings-btn');
             const settingsModal = document.getElementById('settings-modal');
             const closeSettingsBtn = document.getElementById('close-settings-btn');
@@ -453,10 +450,8 @@
             
             let currentChatId = null;
             let isListening = false;
-
-            // --- ADDED: Voice State Variables ---
             let availableVoices = [];
-            let selectedVoiceURI = localStorage.getItem('genexSelectedVoiceURI') || ''; // Store selected voice URI
+            let selectedVoiceURI = localStorage.getItem('genexSelectedVoiceURI') || '';
 
             // --- Login / Logout Logic ---
             function showLoginPage() {
@@ -510,18 +505,14 @@
             function switchToChatView(speakWelcome = true) { if (!welcomeContainer.classList.contains('hidden')) { welcomeContainer.classList.add('hidden'); chatHistory.classList.remove('hidden'); if (speakWelcome && auth.currentUser) { const userName = auth.currentUser.isAnonymous ? "Guest" : (auth.currentUser.displayName ? auth.currentUser.displayName.split(' ')[0] : "User"); talk(`Hello ${userName}, I am Genex, online and ready.`); } } }
             function switchToWelcomeView() { currentChatId = null; chatHistory.innerHTML = ''; welcomeContainer.classList.remove('hidden'); chatHistory.classList.add('hidden'); renderSidebar(); }
             
-            // --- UPDATED: talk() function to use selected voice ---
             function talk(text) {
                 appendMessage('Genex', text);
                 const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, ''); 
                 const utterance = new SpeechSynthesisUtterance(cleanedText);
-                
-                // Set the selected voice if available
                 const selectedVoice = availableVoices.find(voice => voice.voiceURI === selectedVoiceURI);
                 if (selectedVoice) {
                     utterance.voice = selectedVoice;
                 }
-                
                 window.speechSynthesis.speak(utterance);
             }
 
@@ -589,7 +580,7 @@
             // --- Voice Management Functions ---
             function populateVoices() {
                 availableVoices = window.speechSynthesis.getVoices();
-                voicesList.innerHTML = ''; // Clear existing list
+                voicesList.innerHTML = '';
 
                 const englishVoices = availableVoices.filter(voice => voice.lang.startsWith('en'));
                 
@@ -627,14 +618,11 @@
                     const li = document.createElement('li');
                     li.classList.add('voice-option');
                     li.dataset.voiceUri = voice.voiceURI;
-                    
-                    if (voice.voiceURI === selectedVoiceURI) {
-                        li.classList.add('selected');
-                    }
+                    if (voice.voiceURI === selectedVoiceURI) li.classList.add('selected');
 
                     const voiceNameSpan = document.createElement('span');
                     voiceNameSpan.classList.add('voice-name');
-                    voiceNameSpan.textContent = `${voice.name} (${voice.lang})`;
+                    voiceNameSpan.textContent = `${voice.name} (${voice.lang.replace('_', '-')})`;
                     li.appendChild(voiceNameSpan);
 
                     const playBtn = document.createElement('button');
@@ -655,13 +643,10 @@
 
                     li.addEventListener('click', () => {
                         const currentSelected = voicesList.querySelector('.voice-option.selected');
-                        if (currentSelected) {
-                            currentSelected.classList.remove('selected');
-                        }
+                        if (currentSelected) currentSelected.classList.remove('selected');
                         li.classList.add('selected');
                         selectedVoiceURI = voice.voiceURI;
                         localStorage.setItem('genexSelectedVoiceURI', selectedVoiceURI);
-                        console.log("Selected voice:", voice.name);
                     });
                 });
             }
@@ -669,8 +654,7 @@
             if (window.speechSynthesis.onvoiceschanged !== undefined) {
                 window.speechSynthesis.onvoiceschanged = populateVoices;
             }
-            populateVoices(); // Call it once initially too
-
+            populateVoices();
 
             // --- SIDEBAR & SETTINGS EVENT LISTENERS ---
             function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
@@ -680,21 +664,11 @@
             
             settingsBtn.addEventListener('click', () => {
                 settingsModal.classList.remove('hidden');
-                voicesSubmenu.classList.remove('active'); // Ensure voices submenu is hidden initially
+                voicesSubmenu.classList.remove('active'); 
             });
-
-            closeSettingsBtn.addEventListener('click', () => {
-                settingsModal.classList.add('hidden');
-            });
-
-            voicesMenuItem.addEventListener('click', (e) => {
-                e.preventDefault(); 
-                voicesSubmenu.classList.add('active');
-            });
-
-            backToSettingsBtn.addEventListener('click', () => {
-                voicesSubmenu.classList.remove('active');
-            });
+            closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+            voicesMenuItem.addEventListener('click', (e) => { e.preventDefault(); voicesSubmenu.classList.add('active'); });
+            backToSettingsBtn.addEventListener('click', () => voicesSubmenu.classList.remove('active'));
 
             // --- GENERAL EVENT LISTENERS ---
             micBtn.addEventListener('click', () => { if (isListening) { recognition.stop(); } else { try { recognition.start(); } catch(e) { console.error("Could not start recognition:", e); isListening = false; micBtn.classList.remove('listening'); } } });
