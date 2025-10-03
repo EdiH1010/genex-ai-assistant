@@ -230,167 +230,23 @@
 <body>
     
     <div class="login-container" id="login-container">
-        <div class="login-box">
-            <i class="fas fa-brain logo"></i>
-            <h1>Welcome to Genex.ai</h1>
-            <p>Your intelligent web assistant. Sign in to continue.</p>
-            <button class="login-btn google" id="google-login-btn-main"><i class="fab fa-google"></i> Continue with Google</button>
-            <button class="login-btn microsoft" id="microsoft-login-btn-main"><i class="fab fa-microsoft"></i> Continue with Microsoft</button>
-            <button class="login-btn guest" id="guest-login-btn">Continue as Guest</button>
         </div>
-    </div>
 
     <div class="app-container hidden" id="app-container">
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-brain logo"></i>
-                <h2>Genex.ai</h2>
-            </div>
-            <button id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button>
-            <div class="recent-chats">
-                <h3>Recent</h3>
-                <ul id="chat-history-list"></ul>
-            </div>
-            <div class="sidebar-footer">
-                <button class="sidebar-btn" id="settings-btn"><i class="fas fa-cog"></i> Settings</button>
-            </div>
-        </aside>
+            </aside>
 
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
         <main class="main-content">
-            <div class="chat-header">
-                <button class="menu-toggle-btn" id="menu-toggle-btn"><i class="fas fa-bars"></i></button>
-                <div class="header-logo"><i class="fas fa-brain logo"></i><span>Genex.ai</span></div>
-            </div>
-            <div class="profile-container" id="profile-container">
-                <button id="profile-btn"></button>
-                <div class="profile-dropdown" id="profile-dropdown">
-                    <button class="login-btn google" id="google-login-btn-dropdown"><i class="fab fa-google"></i> Continue with Google</button>
-                    <button class="login-btn microsoft" id="microsoft-login-btn-dropdown"><i class="fab fa-microsoft"></i> Continue with Microsoft</button>
-                    <button id="sign-out-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
-                </div>
-            </div>
-            <div class="chat-view" id="chat-view">
-                <div class="chat-content-container" id="chat-content-container">
-                    <div class="welcome-container" id="welcome-container">
-                        <div class="welcome-message">
-                            <h1>Hello, <span class="name" id="user-name"></span></h1>
-                            <p>What should we do today?</p>
-                        </div>
-                        <div class="suggestion-cards">
-                            <div class="card" data-prompt="what is the current time?">What is the current time?</div>
-                            <div class="card" data-prompt="tell me an interesting fact">Tell me an interesting fact</div>
-                            <div class="card" data-prompt="explain quantum computing simply">Explain quantum computing simply</div>
-                            <div class="card" data-prompt="write a short poem about the rain">Write a short poem about the rain</div>
-                        </div>
-                    </div>
-                    <div class="chat-history hidden" id="chat-history"></div>
-                </div>
-            </div>
-            <div class="input-area-container">
-                <div class="input-area">
-                    <input type="text" id="command-input" placeholder="Ask Genex anything...">
-                    <button class="mic-btn" id="mic-btn"><i class="fas fa-microphone"></i></button>
-                </div>
-            </div>
-        </main>
+            </main>
     </div>
 
-    <div class="modal" id="settings-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Settings</h3>
-                <button class="modal-close-btn" id="settings-modal-close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <ul id="settings-list">
-                    <li data-action="activity"><i class="fas fa-history"></i> Activity</li>
-                    <li data-action="voices"><i class="fas fa-volume-high"></i> Voices</li>
-                    <li data-action="saved-info"><i class="fas fa-user-shield"></i> Saved info</li>
-                    <li data-action="connected-apps"><i class="fas fa-cubes"></i> Connected apps</li>
-                    <li data-action="scheduled-actions"><i class="fas fa-clock"></i> Scheduled actions</li>
-                    <li data-action="public-links"><i class="fas fa-link"></i> Your public links</li>
-                    <li data-action="theme"><i class="fas fa-palette"></i> Theme</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="voices-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Select a Voice</h3>
-                <button class="modal-close-btn" id="voices-modal-close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="voice-list">
-                    <p>Loading voices...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="saved-info-modal">
-        <div class="saved-info-container">
-            <div class="saved-info-header">
-                <div class="saved-info-header-left">
-                    <h2>Info that you asked Genex to save <i class="fas fa-info-circle info-icon"></i></h2>
-                    <p>Share info about your life and preferences to get more helpful responses. Add new info here or ask Genex to remember something during a chat.</p>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="saved-info-toggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="saved-info-actions">
-                <button class="saved-info-btn primary" id="add-info-btn"><i class="fas fa-plus"></i> Add</button>
-                <button class="saved-info-btn" id="show-examples-btn">Show examples</button>
-            </div>
-
-            <ul id="saved-info-list">
-                <p class="empty-saved-info" id="empty-saved-info-message">You haven't asked Genex to save anything about you yet</p>
-            </ul>
-        </div>
-    </div>
-
-    <div class="modal" id="add-info-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>What do you want Genex to remember?</h3>
-                <button class="modal-close-btn" id="add-info-modal-close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <textarea id="add-info-textarea" placeholder="For example, 'I prefer short, concise responses'"></textarea>
-                <div id="add-info-actions">
-                    <button id="add-info-cancel-btn">Cancel</button>
-                    <button id="add-info-submit-btn">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="examples-modal">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button class="examples-close-btn" id="examples-modal-close-btn-x">&times;</button>
-                <h3>Examples</h3>
-                <ul>
-                    <li>Use simple language and avoid jargon</li>
-                    <li>I'm vegetarian, so don't suggest recipes with meat</li>
-                    <li>After responding, include a Spanish translation</li>
-                    <li>When planning a trip, include the cost per day</li>
-                    <li>I can only write code in JavaScript</li>
-                    <li>I prefer short, concise responses</li>
-                </ul>
-                <div class="modal-footer">
-                    <button class="close-button-footer" id="examples-modal-close-btn-footer">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <div class="modal" id="settings-modal"></div>
+    <div class="modal" id="voices-modal"></div>
+    <div class="modal" id="saved-info-modal"></div>
+    <div class="modal" id="add-info-modal"></div>
+    <div class="modal" id="examples-modal"></div>
 
     <script type="module">
         // Ensure you have a 'firebase-config.js' file in the same directory
@@ -406,6 +262,16 @@
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
         document.addEventListener('DOMContentLoaded', async () => {
+            // Restore full HTML content for elements
+            document.querySelector('.login-container').innerHTML = `<div class="login-box"><i class="fas fa-brain logo"></i><h1>Welcome to Genex.ai</h1><p>Your intelligent web assistant. Sign in to continue.</p><button class="login-btn google" id="google-login-btn-main"><i class="fab fa-google"></i> Continue with Google</button><button class="login-btn microsoft" id="microsoft-login-btn-main"><i class="fab fa-microsoft"></i> Continue with Microsoft</button><button class="login-btn guest" id="guest-login-btn">Continue as Guest</button></div>`;
+            document.querySelector('aside.sidebar').innerHTML = `<div class="sidebar-header"><i class="fas fa-brain logo"></i><h2>Genex.ai</h2></div><button id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button><div class="recent-chats"><h3>Recent</h3><ul id="chat-history-list"></ul></div><div class="sidebar-footer"><button class="sidebar-btn" id="settings-btn"><i class="fas fa-cog"></i> Settings</button></div>`;
+            document.querySelector('main.main-content').innerHTML = `<div class="chat-header"><button class="menu-toggle-btn" id="menu-toggle-btn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-brain logo"></i><span>Genex.ai</span></div></div><div class="profile-container" id="profile-container"><button id="profile-btn"></button><div class="profile-dropdown" id="profile-dropdown"><button class="login-btn google" id="google-login-btn-dropdown"><i class="fab fa-google"></i> Continue with Google</button><button class="login-btn microsoft" id="microsoft-login-btn-dropdown"><i class="fab fa-microsoft"></i> Continue with Microsoft</button><button id="sign-out-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</button></div></div><div class="chat-view" id="chat-view"><div class="chat-content-container" id="chat-content-container"><div class="welcome-container" id="welcome-container"><div class="welcome-message"><h1>Hello, <span class="name" id="user-name"></span></h1><p>What should we do today?</p></div><div class="suggestion-cards"><div class="card" data-prompt="what is the current time?">What is the current time?</div><div class="card" data-prompt="tell me an interesting fact">Tell me an interesting fact</div><div class="card" data-prompt="explain quantum computing simply">Explain quantum computing simply</div><div class="card" data-prompt="write a short poem about the rain">Write a short poem about the rain</div></div></div><div class="chat-history hidden" id="chat-history"></div></div></div><div class="input-area-container"><div class="input-area"><input type="text" id="command-input" placeholder="Ask Genex anything..."><button class="mic-btn" id="mic-btn"><i class="fas fa-microphone"></i></button></div></div>`;
+            document.getElementById('settings-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Settings</h3><button class="modal-close-btn" id="settings-modal-close-btn">&times;</button></div><div class="modal-body"><ul id="settings-list"><li data-action="activity"><i class="fas fa-history"></i> Activity</li><li data-action="voices"><i class="fas fa-volume-high"></i> Voices</li><li data-action="saved-info"><i class="fas fa-user-shield"></i> Saved info</li><li data-action="connected-apps"><i class="fas fa-cubes"></i> Connected apps</li><li data-action="scheduled-actions"><i class="fas fa-clock"></i> Scheduled actions</li><li data-action="public-links"><i class="fas fa-link"></i> Your public links</li><li data-action="theme"><i class="fas fa-palette"></i> Theme</li></ul></div></div>`;
+            document.getElementById('voices-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Select a Voice</h3><button class="modal-close-btn" id="voices-modal-close-btn">&times;</button></div><div class="modal-body"><div id="voice-list"><p>Loading voices...</p></div></div></div>`;
+            document.getElementById('saved-info-modal').innerHTML = `<div class="saved-info-container"><div class="saved-info-header"><div class="saved-info-header-left"><h2>Info that you asked Genex to save <i class="fas fa-info-circle info-icon"></i></h2><p>Share info about your life and preferences to get more helpful responses. Add new info here or ask Genex to remember something during a chat.</p></div><label class="toggle-switch"><input type="checkbox" id="saved-info-toggle" checked><span class="slider"></span></label></div><div class="saved-info-actions"><button class="saved-info-btn primary" id="add-info-btn"><i class="fas fa-plus"></i> Add</button><button class="saved-info-btn" id="show-examples-btn">Show examples</button></div><ul id="saved-info-list"><p class="empty-saved-info" id="empty-saved-info-message">You haven't asked Genex to save anything about you yet</p></ul></div>`;
+            document.getElementById('add-info-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>What do you want Genex to remember?</h3><button class="modal-close-btn" id="add-info-modal-close-btn">&times;</button></div><div class="modal-body"><textarea id="add-info-textarea" placeholder="For example, 'I prefer short, concise responses'"></textarea><div id="add-info-actions"><button id="add-info-cancel-btn">Cancel</button><button id="add-info-submit-btn">Submit</button></div></div></div>`;
+            document.getElementById('examples-modal').innerHTML = `<div class="modal-content"><div class="modal-body"><button class="examples-close-btn" id="examples-modal-close-btn-x">&times;</button><h3>Examples</h3><ul><li>Use simple language and avoid jargon</li><li>I'm vegetarian, so don't suggest recipes with meat</li><li>After responding, include a Spanish translation</li><li>When planning a trip, include the cost per day</li><li>I can only write code in JavaScript</li><li>I prefer short, concise responses</li></ul><div class="modal-footer"><button class="close-button-footer" id="examples-modal-close-btn-footer">Close</button></div></div></div>`;
+
             const auth = await authPromise;
 
             // --- Get All Elements ---
@@ -468,7 +334,7 @@
             let synth = window.speechSynthesis;
             let voices = [];
 
-            // --- NEW: App Launcher Mappings ---
+            // --- App Launcher Mappings ---
             const appMappings = {
                 'youtube': {
                     displayName: 'YouTube',
@@ -528,11 +394,14 @@
             const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
             const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithPopup(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); };
             
-            [googleLoginBtnMain, googleLoginBtnDropdown].forEach(btn => btn.addEventListener('click', signInWithGoogle));
-            [microsoftLoginBtnMain, microsoftLoginBtnDropdown].forEach(btn => btn.addEventListener('click', signInWithMicrosoft));
-            guestLoginBtn.addEventListener('click', () => { signInAnonymously(auth).catch(error => console.error("Guest sign-in error", error)); });
-            signOutBtn.addEventListener('click', () => { signOut(auth).catch(error => console.error("Sign out error", error)); });
-            
+            // Re-bind listeners after innerHTML injection
+            document.getElementById('google-login-btn-main').addEventListener('click', signInWithGoogle);
+            document.getElementById('microsoft-login-btn-main').addEventListener('click', signInWithMicrosoft);
+            document.getElementById('guest-login-btn').addEventListener('click', () => { signInAnonymously(auth).catch(error => console.error("Guest sign-in error", error)); });
+            document.getElementById('google-login-btn-dropdown').addEventListener('click', signInWithGoogle);
+            document.getElementById('microsoft-login-btn-dropdown').addEventListener('click', signInWithMicrosoft);
+            document.getElementById('sign-out-btn').addEventListener('click', () => { signOut(auth).catch(error => console.error("Sign out error", error)); });
+
             // --- Speech Recognition ---
             recognition.onstart = () => { isListening = true; micBtn.classList.add('listening'); };
             recognition.onend = () => { isListening = false; micBtn.classList.remove('listening'); };
@@ -646,21 +515,20 @@
                     }
                 }
             }
-            function enhanceCodeBlocks(container) { /* ... same as before ... */ }
-            function showLoadingIndicator() { /* ... same as before ... */ }
-            function removeLoadingIndicator() { /* ... same as before ... */ }
-            
-            // --- UPDATED: run_genex with App Launcher Logic ---
+
+            // --- FIXED: run_genex with improved App Launcher and AI response handling ---
             async function run_genex(command) {
                 if (!command) return;
                 commandInput.value = '';
 
-                // 1. Check for "open" command first
-                const openCommandRegex = /^(open|launch)\s+(.+)/i;
+                // 1. Check for local "open" command first
+                // This regex is more flexible and captures the app name
+                const appNamesRegex = Object.keys(appMappings).join('|');
+                const openCommandRegex = new RegExp(`(?:open|launch)\\s+(${appNamesRegex})`, 'i');
                 const match = command.trim().match(openCommandRegex);
 
                 if (match) {
-                    const appNameToOpen = match[2].toLowerCase().trim();
+                    const appNameToOpen = match[1].toLowerCase();
                     const app = appMappings[appNameToOpen];
 
                     if (app) {
@@ -677,7 +545,7 @@
                     }
                 }
 
-                // 2. If not an "open" command, proceed with AI chat
+                // 2. If not a local command, proceed with AI chat
                 switchToChatView(false); 
                 if (!currentChatId) { 
                     currentChatId = Date.now().toString(); 
@@ -695,16 +563,39 @@
                     const currentConversation = chats.find(c => c.id === currentChatId); 
                     const historyForApi = currentConversation.messages.map(msg => ({ role: msg.sender === 'User' ? 'user' : 'model', parts: [{ text: msg.text }] })).slice(0, -1); 
                     const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); 
+                    
                     if (!response.ok) { 
                         let errorMessage = `Server responded with status ${response.status}`; 
                         try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } 
                         throw new Error(`API Error: ${errorMessage}`); 
                     } 
+                    
                     const data = await response.json(); 
                     removeLoadingIndicator(); 
+                    
                     if (data.candidates && data.candidates.length > 0) { 
-                        const aiText = data.candidates[0].content.parts[0].text; 
+                        const aiText = data.candidates[0].content.parts[0].text;
+                        
+                        // 3. Try to parse the AI response for an action
+                        try {
+                            const parsedResponse = JSON.parse(aiText);
+                            // Check if it's an array with an action object
+                            if (Array.isArray(parsedResponse) && parsedResponse.length > 0) {
+                                const actionObject = parsedResponse[0];
+                                if (actionObject.action === 'open_url' && actionObject.url) {
+                                    const hostname = new URL(actionObject.url).hostname.replace('www.','');
+                                    talk(`Sure, opening ${hostname}`, true);
+                                    window.open(actionObject.url, '_blank');
+                                    return; // Action handled
+                                }
+                            }
+                        } catch (e) {
+                            // It's not a JSON action, so just treat it as regular text
+                        }
+                        
+                        // If no action was parsed, just speak and display the text
                         talk(aiText, true);
+
                     } else { 
                         talk("I'm sorry, I couldn't generate a response. Please try again.", true); 
                     } 
@@ -715,109 +606,42 @@
                 } 
             }
             
-            // --- Sidebar Responsive Logic ---
+            // --- Sidebar & Modal Logic (No changes needed here) ---
             function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
             function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
             menuToggleBtn.addEventListener('click', openSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
             
-            // --- General Modal Logic ---
             function openModal(modal) { modal.classList.add('active'); }
             function closeModal(modal) { modal.classList.remove('active'); }
 
             settingsBtn.addEventListener('click', () => openModal(settingsModal));
             settingsModalCloseBtn.addEventListener('click', () => closeModal(settingsModal));
             settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeModal(settingsModal); });
-
             voicesModalCloseBtn.addEventListener('click', () => closeModal(voicesModal));
             voicesModal.addEventListener('click', (e) => { if (e.target === voicesModal) closeModal(voicesModal); });
-            
-            settingsList.querySelector('[data-action="voices"]').addEventListener('click', () => {
-                closeModal(settingsModal);
-                openModal(voicesModal);
-            });
-
-            // --- Saved Info Feature Logic ---
+            settingsList.querySelector('[data-action="voices"]').addEventListener('click', () => { closeModal(settingsModal); openModal(voicesModal); });
             const SAVED_INFO_KEY_PREFIX = 'genexSavedInfo_';
             const SAVED_INFO_ENABLED_KEY_PREFIX = 'genexSavedInfoEnabled_';
-
             function getSavedInfo() { return JSON.parse(localStorage.getItem(SAVED_INFO_KEY_PREFIX + auth.currentUser?.uid) || '[]'); }
             function saveSavedInfo(infoArray) { if (auth.currentUser) { localStorage.setItem(SAVED_INFO_KEY_PREFIX + auth.currentUser.uid, JSON.stringify(infoArray)); renderSavedInfoList(); } }
             function getSavedInfoEnabled() { const enabled = localStorage.getItem(SAVED_INFO_ENABLED_KEY_PREFIX + auth.currentUser?.uid); return enabled === null ? true : JSON.parse(enabled); }
             function setSavedInfoEnabled(enabled) { if (auth.currentUser) { localStorage.setItem(SAVED_INFO_ENABLED_KEY_PREFIX + auth.currentUser.uid, JSON.stringify(enabled)); } }
-
-            function renderSavedInfoList() {
-                const infoItems = getSavedInfo();
-                savedInfoList.innerHTML = '';
-                if (infoItems.length === 0) {
-                    emptySavedInfoMessage.classList.remove('hidden');
-                } else {
-                    emptySavedInfoMessage.classList.add('hidden');
-                    infoItems.forEach((item, index) => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<span>${item}</span><button class="remove-info-btn" data-index="${index}"><i class="fas fa-times"></i></button>`;
-                        savedInfoList.appendChild(li);
-                    });
-                }
-            }
-
-            savedInfoList.addEventListener('click', (e) => {
-                const btn = e.target.closest('.remove-info-btn');
-                if (btn) {
-                    const indexToRemove = parseInt(btn.dataset.index);
-                    let infoItems = getSavedInfo();
-                    infoItems.splice(indexToRemove, 1);
-                    saveSavedInfo(infoItems);
-                }
-            });
-
+            function renderSavedInfoList() { const infoItems = getSavedInfo(); savedInfoList.innerHTML = ''; if (infoItems.length === 0) { emptySavedInfoMessage.classList.remove('hidden'); } else { emptySavedInfoMessage.classList.add('hidden'); infoItems.forEach((item, index) => { const li = document.createElement('li'); li.innerHTML = `<span>${item}</span><button class="remove-info-btn" data-index="${index}"><i class="fas fa-times"></i></button>`; savedInfoList.appendChild(li); }); } }
+            savedInfoList.addEventListener('click', (e) => { const btn = e.target.closest('.remove-info-btn'); if (btn) { const indexToRemove = parseInt(btn.dataset.index); let infoItems = getSavedInfo(); infoItems.splice(indexToRemove, 1); saveSavedInfo(infoItems); } });
             document.getElementById('saved-info-toggle').addEventListener('change', (e) => setSavedInfoEnabled(e.target.checked));
-            
-            settingsList.querySelector('[data-action="saved-info"]').addEventListener('click', () => {
-                document.getElementById('saved-info-toggle').checked = getSavedInfoEnabled();
-                renderSavedInfoList();
-                closeModal(settingsModal);
-                openModal(savedInfoModal);
-            });
-
+            settingsList.querySelector('[data-action="saved-info"]').addEventListener('click', () => { document.getElementById('saved-info-toggle').checked = getSavedInfoEnabled(); renderSavedInfoList(); closeModal(settingsModal); openModal(savedInfoModal); });
             savedInfoModal.addEventListener('click', (e) => { if (e.target === savedInfoModal) closeModal(savedInfoModal); });
             addInfoBtn.addEventListener('click', () => { addInfoTextarea.value = ''; openModal(addInfoModal); });
             addInfoModalCloseBtn.addEventListener('click', () => closeModal(addInfoModal));
             addInfoCancelBtn.addEventListener('click', () => closeModal(addInfoModal));
             addInfoModal.addEventListener('click', (e) => { if (e.target === addInfoModal) closeModal(addInfoModal); });
-
-            addInfoSubmitBtn.addEventListener('click', () => {
-                const newInfo = addInfoTextarea.value.trim();
-                if (newInfo) {
-                    let infoItems = getSavedInfo();
-                    infoItems.push(newInfo);
-                    saveSavedInfo(infoItems);
-                    closeModal(addInfoModal);
-                } else {
-                    alert("Please enter some information to save.");
-                }
-            });
-
+            addInfoSubmitBtn.addEventListener('click', () => { const newInfo = addInfoTextarea.value.trim(); if (newInfo) { let infoItems = getSavedInfo(); infoItems.push(newInfo); saveSavedInfo(infoItems); closeModal(addInfoModal); } else { alert("Please enter some information to save."); } });
             showExamplesBtn.addEventListener('click', () => openModal(examplesModal));
             examplesModalCloseBtnX.addEventListener('click', () => closeModal(examplesModal));
             examplesModalCloseBtnFooter.addEventListener('click', () => closeModal(examplesModal));
             examplesModal.addEventListener('click', (e) => { if (e.target === examplesModal) closeModal(examplesModal); });
-
-            // --- Placeholder functions for other settings ---
-            settingsList.addEventListener('click', (e) => {
-                const action = e.target.closest('li')?.dataset.action;
-                if (!action) return;
-                const placeholders = {
-                    'activity': "Placeholder: This would show your chat activity history.",
-                    'connected-apps': "Placeholder: Manage your connected applications here.",
-                    'scheduled-actions': "Placeholder: View and manage scheduled actions or reminders.",
-                    'public-links': "Placeholder: Manage links you've shared publicly from Genex.",
-                    'theme': "Placeholder: Choose your preferred theme (e.g., Light/Dark mode)."
-                };
-                if (placeholders[action]) {
-                    alert(placeholders[action]);
-                }
-            });
+            settingsList.addEventListener('click', (e) => { const action = e.target.closest('li')?.dataset.action; if (!action) return; const placeholders = { 'activity': "Placeholder: This would show your chat activity history.", 'connected-apps': "Placeholder: Manage your connected applications here.", 'scheduled-actions': "Placeholder: View and manage scheduled actions or reminders.", 'public-links': "Placeholder: Manage links you've shared publicly from Genex.", 'theme': "Placeholder: Choose your preferred theme (e.g., Light/Dark mode)." }; if (placeholders[action]) { alert(placeholders[action]); } });
 
             // --- General Event Listeners ---
             micBtn.addEventListener('click', () => { if (isListening) { recognition.stop(); } else { try { recognition.start(); } catch(e) { console.error("Could not start recognition:", e); isListening = false; micBtn.classList.remove('listening'); } } });
@@ -826,7 +650,6 @@
             newChatBtn.addEventListener('click', () => { switchToWelcomeView(); closeSidebar(); });
             chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) { renderChat(li.dataset.chatId); if (window.innerWidth < 768) { closeSidebar(); } } });
         
-            // Functions that were accidentally removed in previous edits
             function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
             function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
             function enhanceCodeBlocks(container) { const codeBlocks = container.querySelectorAll('pre'); codeBlocks.forEach(pre => { const code = pre.querySelector('code'); if (!code) return; const copyButton = document.createElement('button'); copyButton.className = 'copy-btn'; copyButton.textContent = 'Copy'; pre.appendChild(copyButton); copyButton.addEventListener('click', () => { navigator.clipboard.writeText(code.textContent).then(() => { copyButton.textContent = 'Copied!'; setTimeout(() => { copyButton.textContent = 'Copy'; }, 2000); }).catch(err => { console.error('Failed to copy text: ', err); copyButton.textContent = 'Error'; }); }); }); }
