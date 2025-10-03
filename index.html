@@ -327,7 +327,9 @@
             getRedirectResult(auth).catch((error) => console.error("Error getting redirect result:", error));
 
             const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
-            const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithRedirect(auth, provider); };
+            
+            // FIXED: Changed signInWithRedirect to signInWithPopup for Microsoft
+            const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithPopup(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); };
             
             googleLoginBtnMain.addEventListener('click', signInWithGoogle);
             googleLoginBtnDropdown.addEventListener('click', signInWithGoogle);
