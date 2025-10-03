@@ -6,6 +6,7 @@
     <title>Genex.ai - Web Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             --bg-color: #131314;
@@ -95,68 +96,26 @@
         @keyframes pulsate-mic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         /* --- STYLES FOR SLIDING SIDEBAR --- */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 998;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .menu-toggle-btn {
-            display: block;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            margin-right: 1rem;
-            padding: 0.5rem;
-            z-index: 15;
-        }
-
-        /* Mobile-first: Sidebar is hidden off-screen by default */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            z-index: 999;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .sidebar.open {
-            transform: translateX(0);
-        }
-
-        /* Media Query for Desktop Screens */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .menu-toggle-btn { display: block; background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; margin-right: 1rem; padding: 0.5rem; z-index: 15; }
+        .sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        .sidebar.open { transform: translateX(0); }
         @media (min-width: 768px) {
-            .menu-toggle-btn {
-                display: none;
-            }
-
-            .sidebar {
-                position: static;
-                transform: none;
-                height: auto;
-                z-index: auto;
-            }
-
-            .sidebar-overlay {
-                display: none;
-            }
+            .menu-toggle-btn { display: none; }
+            .sidebar { position: static; transform: none; height: auto; z-index: auto; }
+            .sidebar-overlay { display: none; }
         }
+
+        /* --- ADDED: STYLES FOR MARKDOWN AND CODE BLOCKS --- */
+        .message-content p { margin-bottom: 0.5rem; }
+        .message-content p:last-child { margin-bottom: 0; }
+        .message-content ul, .message-content ol { padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        .message-content li { margin-bottom: 0.25rem; }
+        .message-content pre { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; overflow-x: auto; position: relative; margin: 0.5rem 0; }
+        .message-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: var(--text-primary); }
+        .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--border-color); color: var(--text-secondary); border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; opacity: 0.7; transition: all 0.2s ease; }
+        .copy-btn:hover { opacity: 1; background-color: var(--accent-primary); color: var(--bg-color); }
     </style>
 </head>
 <body>
@@ -166,15 +125,9 @@
             <i class="fas fa-brain logo"></i>
             <h1>Welcome to Genex.ai</h1>
             <p>Your intelligent web assistant. Sign in to continue.</p>
-            <button class="login-btn google" id="google-login-btn-main">
-                <i class="fab fa-google"></i> Continue with Google
-            </button>
-            <button class="login-btn microsoft" id="microsoft-login-btn-main">
-                <i class="fab fa-microsoft"></i> Continue with Microsoft
-            </button>
-            <button class="login-btn guest" id="guest-login-btn">
-                Continue as Guest
-            </button>
+            <button class="login-btn google" id="google-login-btn-main"><i class="fab fa-google"></i> Continue with Google</button>
+            <button class="login-btn microsoft" id="microsoft-login-btn-main"><i class="fab fa-microsoft"></i> Continue with Microsoft</button>
+            <button class="login-btn guest" id="guest-login-btn">Continue as Guest</button>
         </div>
     </div>
 
@@ -195,26 +148,15 @@
 
         <main class="main-content">
             <div class="chat-header">
-                <button class="menu-toggle-btn" id="menu-toggle-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-logo">
-                    <i class="fas fa-brain logo"></i>
-                    <span>Genex.ai</span>
-                </div>
+                <button class="menu-toggle-btn" id="menu-toggle-btn"><i class="fas fa-bars"></i></button>
+                <div class="header-logo"><i class="fas fa-brain logo"></i><span>Genex.ai</span></div>
             </div>
             <div class="profile-container" id="profile-container">
                 <button id="profile-btn"></button>
                 <div class="profile-dropdown" id="profile-dropdown">
-                    <button class="login-btn google" id="google-login-btn-dropdown">
-                        <i class="fab fa-google"></i> Continue with Google
-                    </button>
-                    <button class="login-btn microsoft" id="microsoft-login-btn-dropdown">
-                        <i class="fab fa-microsoft"></i> Continue with Microsoft
-                    </button>
-                    <button id="sign-out-btn">
-                        <i class="fas fa-sign-out-alt"></i> Sign Out
-                    </button>
+                    <button class="login-btn google" id="google-login-btn-dropdown"><i class="fab fa-google"></i> Continue with Google</button>
+                    <button class="login-btn microsoft" id="microsoft-login-btn-dropdown"><i class="fab fa-microsoft"></i> Continue with Microsoft</button>
+                    <button id="sign-out-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
                 </div>
             </div>
             <div class="chat-view" id="chat-view">
@@ -245,12 +187,10 @@
 
     <script type="module">
         // Ensure you have a 'firebase-config.js' file in the same directory
-        // with your Firebase app initialization for this to work.
         import { authPromise } from './firebase-config.js'; 
         import { 
             onAuthStateChanged, 
             signInWithPopup,
-            signInWithRedirect,
             getRedirectResult,
             GoogleAuthProvider, 
             OAuthProvider,
@@ -267,9 +207,7 @@
             const guestLoginBtn = document.getElementById('guest-login-btn');
             const googleLoginBtnMain = document.getElementById('google-login-btn-main');
             const microsoftLoginBtnMain = document.getElementById('microsoft-login-btn-main');
-            const profileContainer = document.getElementById('profile-container');
             const profileBtn = document.getElementById('profile-btn');
-            const profileDropdown = document.getElementById('profile-dropdown');
             const googleLoginBtnDropdown = document.getElementById('google-login-btn-dropdown');
             const microsoftLoginBtnDropdown = document.getElementById('microsoft-login-btn-dropdown');
             const signOutBtn = document.getElementById('sign-out-btn');
@@ -286,7 +224,6 @@
             const menuToggleBtn = document.getElementById('menu-toggle-btn');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             
-            // --- UPDATED: Speech Recognition Setup ---
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             recognition.continuous = false; 
@@ -295,7 +232,7 @@
             recognition.maxAlternatives = 1;
             
             let currentChatId = null;
-            let isListening = false; // Flag to track microphone state
+            let isListening = false;
 
             // --- Login / Logout Logic ---
             function showLoginPage() {
@@ -313,11 +250,7 @@
                 if (user) {
                     const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User");
                     showChatApp(displayName);
-                    if (user.photoURL) {
-                        profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile Picture">`;
-                    } else {
-                        profileBtn.innerHTML = `<i class="fas fa-user-circle"></i>`;
-                    }
+                    profileBtn.innerHTML = user.photoURL ? `<img src="${user.photoURL}" alt="Profile Picture">` : `<i class="fas fa-user-circle"></i>`;
                     googleLoginBtnDropdown.classList.add('hidden');
                     microsoftLoginBtnDropdown.classList.add('hidden');
                     signOutBtn.classList.remove('hidden');
@@ -335,105 +268,105 @@
             const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
             const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithPopup(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); };
             
-            googleLoginBtnMain.addEventListener('click', signInWithGoogle);
-            googleLoginBtnDropdown.addEventListener('click', signInWithGoogle);
-            microsoftLoginBtnMain.addEventListener('click', signInWithMicrosoft);
-            microsoftLoginBtnDropdown.addEventListener('click', signInWithMicrosoft);
+            [googleLoginBtnMain, googleLoginBtnDropdown].forEach(btn => btn.addEventListener('click', signInWithGoogle));
+            [microsoftLoginBtnMain, microsoftLoginBtnDropdown].forEach(btn => btn.addEventListener('click', signInWithMicrosoft));
             guestLoginBtn.addEventListener('click', () => { signInAnonymously(auth).catch(error => console.error("Guest sign-in error", error)); });
             signOutBtn.addEventListener('click', () => { signOut(auth).catch(error => console.error("Sign out error", error)); });
             
             // --- Chat & Recognition Functions ---
+            recognition.onstart = () => { isListening = true; micBtn.classList.add('listening'); };
+            recognition.onend = () => { isListening = false; micBtn.classList.remove('listening'); };
+            recognition.onerror = (event) => { isListening = false; micBtn.classList.remove('listening'); console.error("Speech recognition error:", event.error); if (event.error === 'not-allowed' || event.error === 'service-not-allowed') { alert("Microphone permission was denied."); } else if (event.error === 'no-speech') { console.log("No speech detected."); } else { alert(`An error occurred with the microphone: ${event.error}`); } };
+            recognition.onresult = e => { const correctedTranscript = e.results[0][0].transcript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); run_genex(correctedTranscript); };
             
-            // --- UPDATED: Speech Recognition Event Handlers ---
-            recognition.onstart = () => {
-                isListening = true;
-                micBtn.classList.add('listening');
-            };
-            
-            recognition.onend = () => {
-                isListening = false;
-                micBtn.classList.remove('listening');
-            };
-
-            recognition.onerror = (event) => {
-                isListening = false;
-                micBtn.classList.remove('listening');
-                console.error("Speech recognition error:", event.error);
-                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                    alert("Microphone permission was denied. Please allow microphone access in your browser's site settings.");
-                } else if (event.error === 'no-speech') {
-                    // This error is common, so a console log might be better than an alert
-                    console.log("No speech detected.");
-                } else {
-                    alert(`An error occurred with the microphone: ${event.error}`);
-                }
-            };
-            
-            recognition.onresult = e => { 
-                const originalTranscript = e.results[0][0].transcript; 
-                const correctedTranscript = originalTranscript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); 
-                run_genex(correctedTranscript); 
-            };
-            
-            function getChats() { const user = auth.currentUser; if (!user) return []; return JSON.parse(localStorage.getItem(`genexChats_${user.uid}`) || '[]'); }
-            function saveChats(chats) { const user = auth.currentUser; if (!user) return; localStorage.setItem(`genexChats_${user.uid}`, JSON.stringify(chats)); }
+            function getChats() { return JSON.parse(localStorage.getItem(`genexChats_${auth.currentUser?.uid}`) || '[]'); }
+            function saveChats(chats) { if (auth.currentUser) localStorage.setItem(`genexChats_${auth.currentUser.uid}`, JSON.stringify(chats)); }
             function renderSidebar() { const chats = getChats(); chatHistoryList.innerHTML = ''; chats.slice().reverse().forEach(chat => { const li = document.createElement('li'); li.textContent = chat.title; li.dataset.chatId = chat.id; if (chat.id === currentChatId) li.classList.add('active'); chatHistoryList.appendChild(li); }); }
-            function renderChat(chatId) { const chats = getChats(); const chat = chats.find(c => c.id === chatId); if (!chat) return; switchToChatView(false); chatHistory.innerHTML = ''; chat.messages.forEach(msg => appendMessage(msg.sender, msg.text, false)); currentChatId = chatId; renderSidebar(); }
-            function switchToChatView(speakWelcome = true) { if (!welcomeContainer.classList.contains('hidden')) { welcomeContainer.classList.add('hidden'); chatHistory.classList.remove('hidden'); if (speakWelcome) { const user = auth.currentUser; const userName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User"); talk(`Hello ${userName}, I am Genex, online and ready.`); } } }
+            function renderChat(chatId) { const chat = getChats().find(c => c.id === chatId); if (!chat) return; switchToChatView(false); chatHistory.innerHTML = ''; chat.messages.forEach(msg => appendMessage(msg.sender, msg.text, false)); currentChatId = chatId; renderSidebar(); }
+            function switchToChatView(speakWelcome = true) { if (!welcomeContainer.classList.contains('hidden')) { welcomeContainer.classList.add('hidden'); chatHistory.classList.remove('hidden'); if (speakWelcome && auth.currentUser) { const userName = auth.currentUser.isAnonymous ? "Guest" : (auth.currentUser.displayName ? auth.currentUser.displayName.split(' ')[0] : "User"); talk(`Hello ${userName}, I am Genex, online and ready.`); } } }
             function switchToWelcomeView() { currentChatId = null; chatHistory.innerHTML = ''; welcomeContainer.classList.remove('hidden'); chatHistory.classList.add('hidden'); renderSidebar(); }
-            function talk(text) { appendMessage('Genex', text); const utterance = new SpeechSynthesisUtterance(text); window.speechSynthesis.speak(utterance); }
-            function getUserLocation() { return new Promise((resolve) => { if (!navigator.geolocation) { resolve(null); } else { navigator.geolocation.getCurrentPosition( (position) => { resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude }); }, () => { resolve(null); } ); } }); }
-            function appendMessage(sender, text, save = true) { const user = auth.currentUser; const senderName = sender === 'User' ? (user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User")) : 'Genex'; const messageDiv = document.createElement('div'); messageDiv.classList.add('chat-message', sender === 'User' ? 'user-message' : 'genex-message'); const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = senderName; const contentP = document.createElement('p'); contentP.classList.add('message-content'); contentP.textContent = text; messageDiv.appendChild(senderP); messageDiv.appendChild(contentP); chatHistory.appendChild(messageDiv); chatView.scrollTop = chatView.scrollHeight; if (save && currentChatId) { const chats = getChats(); const chat = chats.find(c => c.id === currentChatId); if (chat) { const isFirstUserMessage = chat.messages.filter(m => m.sender === 'User').length === 0; if(isFirstUserMessage && sender === 'User') { chat.title = text.length > 25 ? text.substring(0, 25) + '...' : text; } chat.messages.push({ sender, text }); saveChats(chats); if (isFirstUserMessage && sender === 'User') { renderSidebar(); } } } }
+            function talk(text) { appendMessage('Genex', text); const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, ''); const utterance = new SpeechSynthesisUtterance(cleanedText); window.speechSynthesis.speak(utterance); }
+            
+            // --- UPDATED: appendMessage function to handle Markdown and code blocks ---
+            function appendMessage(sender, text, save = true) {
+                const user = auth.currentUser;
+                const senderName = sender === 'User' ? (user?.isAnonymous ? "Guest" : (user?.displayName ? user.displayName.split(' ')[0] : "User")) : 'Genex';
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', sender === 'User' ? 'user-message' : 'genex-message');
+                const senderP = document.createElement('p');
+                senderP.classList.add('sender');
+                senderP.textContent = senderName;
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('message-content');
+
+                if (sender === 'Genex') {
+                    contentDiv.innerHTML = marked.parse(text);
+                } else {
+                    const p = document.createElement('p');
+                    p.textContent = text;
+                    contentDiv.appendChild(p);
+                }
+
+                messageDiv.appendChild(senderP);
+                messageDiv.appendChild(contentDiv);
+                chatHistory.appendChild(messageDiv);
+                if (sender === 'Genex') {
+                    enhanceCodeBlocks(contentDiv);
+                }
+                chatView.scrollTop = chatView.scrollHeight;
+                if (save && currentChatId) {
+                    const chats = getChats();
+                    const chat = chats.find(c => c.id === currentChatId);
+                    if (chat) {
+                        const isFirstUserMessage = chat.messages.filter(m => m.sender === 'User').length === 0;
+                        if(isFirstUserMessage && sender === 'User') { chat.title = text.length > 25 ? text.substring(0, 25) + '...' : text; }
+                        chat.messages.push({ sender, text });
+                        saveChats(chats);
+                        if (isFirstUserMessage && sender === 'User') { renderSidebar(); }
+                    }
+                }
+            }
+
+            // --- ADDED: New function to add copy buttons to code blocks ---
+            function enhanceCodeBlocks(container) {
+                const codeBlocks = container.querySelectorAll('pre');
+                codeBlocks.forEach(pre => {
+                    const code = pre.querySelector('code');
+                    if (!code) return;
+                    const copyButton = document.createElement('button');
+                    copyButton.className = 'copy-btn';
+                    copyButton.textContent = 'Copy';
+                    pre.appendChild(copyButton);
+                    copyButton.addEventListener('click', () => {
+                        navigator.clipboard.writeText(code.textContent).then(() => {
+                            copyButton.textContent = 'Copied!';
+                            setTimeout(() => { copyButton.textContent = 'Copy'; }, 2000);
+                        }).catch(err => { console.error('Failed to copy text: ', err); copyButton.textContent = 'Error'; });
+                    });
+                });
+            }
+
+            function showLoadingIndicator() { /* ... same as before ... */ }
+            function removeLoadingIndicator() { /* ... same as before ... */ }
+            async function run_genex(command) { /* ... same as before, no changes needed here ... */ }
+            
+            // --- Re-add the original functions that were accidentally removed in summarization ---
             function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
             function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
-            async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await getUserLocation(); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages .map(msg => ({ role: msg.sender === 'User' ? 'user' : 'model', parts: [{ text: msg.text }] })) .slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
+            async function run_genex(command) { if (!command) return; switchToChatView(false); commandInput.value = ''; if (!currentChatId) { currentChatId = Date.now().toString(); const chats = getChats(); chats.push({ id: currentChatId, title: "New Chat", messages: [] }); saveChats(chats); renderSidebar(); } appendMessage('User', command); showLoadingIndicator(); try { const location = await (new Promise(r => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => r({lat:p.coords.latitude, lon:p.coords.longitude}),()=>r(null)) : r(null))); const chats = getChats(); const currentConversation = chats.find(c => c.id === currentChatId); const historyForApi = currentConversation.messages.map(msg => ({ role: msg.sender === 'User' ? 'user' : 'model', parts: [{ text: msg.text }] })).slice(0, -1); const response = await fetch('/get-ai-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: command, history: historyForApi, location: location }) }); if (!response.ok) { let errorMessage = `Server responded with status ${response.status}`; try { const errorData = await response.json(); errorMessage = errorData.error?.message || errorData.error || JSON.stringify(errorData); } catch (e) { errorMessage = await response.text(); } throw new Error(`API Error: ${errorMessage}`); } const data = await response.json(); removeLoadingIndicator(); if (data.candidates && data.candidates.length > 0) { const aiText = data.candidates[0].content.parts[0].text; try { const parsedResponse = JSON.parse(aiText); if (parsedResponse.action === 'open_url' && parsedResponse.url) { talk(`Opening ${new URL(parsedResponse.url).hostname} for you.`); window.open(parsedResponse.url, '_blank'); } else { talk(aiText); } } catch (e) { talk(aiText); } } else { talk("I'm sorry, I couldn't generate a response. Please try again."); } } catch (error) { console.error("API Call Error:", error); removeLoadingIndicator(); talk(`Sorry, I'm having a little trouble connecting to my brain right now. The error is: ${error.message}`); } }
             
             // --- SIDEBAR EVENT LISTENERS ---
-            function openSidebar() {
-                sidebar.classList.add('open');
-                sidebarOverlay.classList.add('active');
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('active');
-            }
-
+            function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
+            function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
             menuToggleBtn.addEventListener('click', openSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
             
             // --- GENERAL EVENT LISTENERS ---
-            
-            // UPDATED: Mic button now toggles listening state
-            micBtn.addEventListener('click', () => {
-                if (isListening) {
-                    recognition.stop();
-                } else {
-                    try {
-                        recognition.start();
-                    } catch(e) {
-                        console.error("Could not start recognition (it might be already active):", e);
-                        isListening = false;
-                        micBtn.classList.remove('listening');
-                    }
-                }
-            });
-
+            micBtn.addEventListener('click', () => { if (isListening) { recognition.stop(); } else { try { recognition.start(); } catch(e) { console.error("Could not start recognition:", e); isListening = false; micBtn.classList.remove('listening'); } } });
             commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
             suggestionCards.addEventListener('click', e => { const card = e.target.closest('.card'); if (card) run_genex(card.dataset.prompt); });
-            newChatBtn.addEventListener('click', () => {
-                switchToWelcomeView();
-                closeSidebar();
-            });
-            chatHistoryList.addEventListener('click', e => { 
-                const li = e.target.closest('li'); 
-                if (li && li.dataset.chatId) {
-                    renderChat(li.dataset.chatId);
-                    if (window.innerWidth < 768) {
-                        closeSidebar();
-                    }
-                }
-            });
+            newChatBtn.addEventListener('click', () => { switchToWelcomeView(); closeSidebar(); });
+            chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) { renderChat(li.dataset.chatId); if (window.innerWidth < 768) { closeSidebar(); } } });
         });
     </script>
 </body>
