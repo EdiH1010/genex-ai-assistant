@@ -285,11 +285,17 @@
             const sidebar = document.getElementById('sidebar');
             const menuToggleBtn = document.getElementById('menu-toggle-btn');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
+            
+            // --- UPDATED: Speech Recognition Setup ---
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
-            recognition.continuous = false; recognition.lang = 'en-US'; recognition.interimResults = false; recognition.maxAlternatives = 1;
+            recognition.continuous = false; 
+            recognition.lang = 'en-US'; 
+            recognition.interimResults = false; 
+            recognition.maxAlternatives = 1;
             
             let currentChatId = null;
+            let isListening = false; // Flag to track microphone state
 
             // --- Login / Logout Logic ---
             function showLoginPage() {
@@ -327,8 +333,6 @@
             getRedirectResult(auth).catch((error) => console.error("Error getting redirect result:", error));
 
             const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
-            
-            // FIXED: Changed signInWithRedirect to signInWithPopup for Microsoft
             const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithPopup(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); };
             
             googleLoginBtnMain.addEventListener('click', signInWithGoogle);
@@ -339,8 +343,37 @@
             signOutBtn.addEventListener('click', () => { signOut(auth).catch(error => console.error("Sign out error", error)); });
             
             // --- Chat & Recognition Functions ---
-            recognition.onstart = () => micBtn.classList.add('listening');
-            recognition.onend = () => micBtn.classList.remove('listening');
+            
+            // --- UPDATED: Speech Recognition Event Handlers ---
+            recognition.onstart = () => {
+                isListening = true;
+                micBtn.classList.add('listening');
+            };
+            
+            recognition.onend = () => {
+                isListening = false;
+                micBtn.classList.remove('listening');
+            };
+
+            recognition.onerror = (event) => {
+                isListening = false;
+                micBtn.classList.remove('listening');
+                console.error("Speech recognition error:", event.error);
+                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    alert("Microphone permission was denied. Please allow microphone access in your browser's site settings.");
+                } else if (event.error === 'no-speech') {
+                    // This error is common, so a console log might be better than an alert
+                    console.log("No speech detected.");
+                } else {
+                    alert(`An error occurred with the microphone: ${event.error}`);
+                }
+            };
+            
+            recognition.onresult = e => { 
+                const originalTranscript = e.results[0][0].transcript; 
+                const correctedTranscript = originalTranscript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); 
+                run_genex(correctedTranscript); 
+            };
             
             function getChats() { const user = auth.currentUser; if (!user) return []; return JSON.parse(localStorage.getItem(`genexChats_${user.uid}`) || '[]'); }
             function saveChats(chats) { const user = auth.currentUser; if (!user) return; localStorage.setItem(`genexChats_${user.uid}`, JSON.stringify(chats)); }
@@ -370,7 +403,22 @@
             sidebarOverlay.addEventListener('click', closeSidebar);
             
             // --- GENERAL EVENT LISTENERS ---
-            micBtn.addEventListener('click', () => recognition.start());
+            
+            // UPDATED: Mic button now toggles listening state
+            micBtn.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    try {
+                        recognition.start();
+                    } catch(e) {
+                        console.error("Could not start recognition (it might be already active):", e);
+                        isListening = false;
+                        micBtn.classList.remove('listening');
+                    }
+                }
+            });
+
             commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
             suggestionCards.addEventListener('click', e => { const card = e.target.closest('.card'); if (card) run_genex(card.dataset.prompt); });
             newChatBtn.addEventListener('click', () => {
@@ -386,7 +434,6 @@
                     }
                 }
             });
-            recognition.onresult = e => { const originalTranscript = e.results[0][0].transcript; const correctedTranscript = originalTranscript.replace(/^(zenix|zenex|jennex|zennex|genix)\b/i, 'Genex'); run_genex(correctedTranscript); };
         });
     </script>
 </body>
