@@ -25,6 +25,23 @@
             --toggle-on: var(--accent-primary);
             --toggle-off: var(--text-secondary);
         }
+
+        html.light-theme {
+            --bg-color: #ffffff;
+            --sidebar-color: #f8f9fa;
+            --card-color: #ffffff;
+            --input-bg: #f1f3f4;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --accent-primary: #1a73e8;
+            --accent-secondary: #9334e6;
+            --user-bubble-bg: #e8f0fe;
+            --border-color: #dadce0;
+            --modal-bg: #ffffff;
+            --toggle-on: var(--accent-primary);
+            --toggle-off: #bdc1c6;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-primary); overflow: hidden; }
         .hidden { display: none !important; }
@@ -36,7 +53,7 @@
         .login-box h1 { font-size: 1.75rem; font-weight: 600; }
         .login-box p { color: var(--text-secondary); margin-bottom: 1.5rem; }
         .login-btn { width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: transparent; color: var(--text-primary); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
-        .login-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .login-btn:hover { background-color: rgba(128, 128, 128, 0.1); }
         .login-btn i { font-size: 1.2rem; }
         .login-btn.google { border-color: var(--google-red); color: var(--google-red); }
         .login-btn.google:hover { background-color: rgba(234, 67, 53, 0.1); }
@@ -53,17 +70,17 @@
         .sidebar-header h2 { font-size: 1.5rem; margin-left: 0.75rem; }
         .sidebar .logo { font-size: 1.8rem; background: -webkit-linear-gradient(45deg, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         #new-chat-btn { width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: transparent; color: var(--text-primary); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; }
-        #new-chat-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
+        #new-chat-btn:hover { background-color: rgba(128, 128, 128, 0.1); }
         .recent-chats { margin-bottom: auto; } /* Pushes settings to the bottom */
         .recent-chats h3 { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.5rem; padding: 0 0.5rem; }
         #chat-history-list { list-style: none; overflow-y: auto; max-height: calc(100vh - 300px); /* Adjust max-height */ }
         #chat-history-list li { padding: 0.6rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
-        #chat-history-list li:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
+        #chat-history-list li:hover { background-color: rgba(128, 128, 128, 0.1); color: var(--text-primary); }
         #chat-history-list li.active { background-color: var(--user-bubble-bg); color: var(--text-primary); font-weight: 500; }
         
         .sidebar-footer { padding-top: 1rem; border-top: 1px solid var(--border-color); }
         .sidebar-btn { width: 100%; padding: 0.6rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); background: none; border: none; text-align: left; display: flex; align-items: center; gap: 0.75rem; }
-        .sidebar-btn:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
+        .sidebar-btn:hover { background-color: rgba(128, 128, 128, 0.1); color: var(--text-primary); }
         .sidebar-btn i { width: 20px; text-align: center; font-size: 1rem; }
 
         /* --- Profile Button & Dropdown --- */
@@ -72,6 +89,7 @@
         #profile-btn:hover { box-shadow: 0 0 0 4px var(--card-color); }
         #profile-btn img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
         .profile-dropdown { position: absolute; top: 100%; right: 0; background-color: #2a2b2d; border: 1px solid var(--border-color); border-radius: 8px; width: 220px; padding: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s ease-out; }
+        html.light-theme .profile-dropdown { background-color: #ffffff; }
         .profile-container:hover .profile-dropdown { opacity: 1; transform: translateY(0); pointer-events: auto; }
         .profile-dropdown .login-btn { width: calc(100% - 1rem); margin: 0.5rem; justify-content: flex-start; }
         #sign-out-btn { width: 100%; padding: 0.75rem; border: none; background-color: transparent; color: var(--text-secondary); font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; text-align: left; display: flex; align-items: center; gap: 0.75rem; border-top: 1px solid var(--border-color); margin-top: 0.5rem; border-radius: 0; }
@@ -86,7 +104,7 @@
         .welcome-message p { font-size: 1.75rem; color: var(--text-secondary); margin-top: 0.5rem; }
         .suggestion-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 3rem; width: 100%; }
         .card { background-color: var(--card-color); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s ease; font-size: 0.95rem; font-weight: 500; text-align: left; }
-        .card:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .card:hover { background-color: rgba(128, 128, 128, 0.1); }
         .chat-header { position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; display: flex; align-items: center; }
         .header-logo { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; font-weight: 500; }
         .header-logo .logo { font-size: 1.2rem; }
@@ -109,7 +127,7 @@
         .input-area { display: flex; align-items: center; background-color: var(--input-bg); border-radius: 12px; padding: 0.5rem 1rem; width: 100%; max-width: 800px; border: 1px solid var(--border-color); }
         .input-area input { flex-grow: 1; background: none; border: none; outline: none; color: var(--text-primary); font-size: 1rem; }
         .input-area button { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: background-color 0.2s ease, color 0.2s ease; }
-        .input-area button:hover { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.1); }
+        .input-area button:hover { color: var(--text-primary); background-color: rgba(128, 128, 128, 0.15); }
         .mic-btn.listening { color: var(--accent-primary); animation: pulsate-mic 1.5s infinite; }
         @keyframes pulsate-mic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
@@ -147,36 +165,29 @@
         .modal-close-btn:hover { color: var(--text-primary); }
         .modal-body { padding: 0 1rem 1rem 1rem; }
 
+        /* --- Settings & Theme Modal --- */
         #settings-list { list-style: none; }
         #settings-list li { display: flex; align-items: center; padding: 0.8rem 0.5rem; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; font-size: 0.95rem; }
-        #settings-list li:hover { background-color: rgba(255, 255, 255, 0.08); }
+        #settings-list li:hover { background-color: rgba(128, 128, 128, 0.1); }
         #settings-list li i { width: 30px; text-align: center; margin-right: 0.75rem; color: var(--text-secondary); font-size: 1.1rem; }
+        #settings-back-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; margin-right: 1rem; padding: 0.2rem; }
+        #settings-back-btn:hover { color: var(--text-primary); }
+        .theme-option-group { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+        .theme-option { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0.5rem; border-radius: 8px; cursor: pointer; }
+        .theme-option:hover { background-color: rgba(128, 128, 128, 0.1); }
+        .theme-option label { cursor: pointer; flex-grow: 1; }
+        input[type="radio"] { accent-color: var(--accent-primary); width: 18px; height: 18px; }
 
+        /* --- Voices Modal --- */
         #voice-list { max-height: 60vh; overflow-y: auto; }
         .voice-option { display: grid; grid-template-columns: 30px 1fr 40px; align-items: center; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--border-color); }
         .voice-option:last-child { border-bottom: none; }
         .voice-option label { cursor: pointer; }
         .voice-play-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; transition: color 0.2s ease; }
         .voice-play-btn:hover { color: var(--accent-primary); }
-        input[type="radio"] { accent-color: var(--accent-primary); }
 
         /* --- Saved Info Page/Modal Styles --- */
-        .saved-info-container {
-            width: 90%;
-            max-width: 700px;
-            background-color: var(--modal-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-            padding: 2rem;
-            position: relative;
-            z-index: 1001;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            height: 90%;
-            max-height: 800px;
-        }
+        .saved-info-container { width: 90%; max-width: 700px; background-color: var(--modal-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.4); padding: 2rem; position: relative; z-index: 1001; display: flex; flex-direction: column; gap: 1.5rem; height: 90%; max-height: 800px; }
         .saved-info-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
         .saved-info-header-left { display: flex; flex-direction: column; gap: 0.5rem; }
         .saved-info-header h2 { font-size: 1.75rem; font-weight: 500; color: var(--text-primary); }
@@ -191,8 +202,9 @@
         input:checked + .slider:before { transform: translateX(20px); }
         .saved-info-actions { display: flex; gap: 1rem; margin-bottom: 1rem; }
         .saved-info-btn { padding: 0.75rem 1.5rem; border-radius: 20px; border: 1px solid var(--border-color); background-color: var(--card-color); color: var(--text-primary); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; display: flex; align-items: center; gap: 0.5rem; }
-        .saved-info-btn:hover { background-color: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2); }
+        .saved-info-btn:hover { background-color: rgba(128, 128, 128, 0.1); border-color: rgba(255, 255, 255, 0.2); }
         .saved-info-btn.primary { background-color: var(--accent-primary); color: var(--bg-color); border-color: var(--accent-primary); }
+        html.light-theme .saved-info-btn.primary { color: #ffffff; }
         .saved-info-btn.primary:hover { opacity: 0.9; }
         #saved-info-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; min-height: 100px; }
         #saved-info-list li { background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; font-size: 0.95rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; }
@@ -209,8 +221,9 @@
         #add-info-actions { display: flex; justify-content: flex-end; gap: 1rem; }
         #add-info-actions button { padding: 0.75rem 1.5rem; border-radius: 20px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
         #add-info-cancel-btn { background: none; border: 1px solid var(--border-color); color: var(--text-primary); }
-        #add-info-cancel-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
+        #add-info-cancel-btn:hover { background-color: rgba(128, 128, 128, 0.1); }
         #add-info-submit-btn { background-color: var(--accent-primary); color: var(--bg-color); border: 1px solid var(--accent-primary); }
+        html.light-theme #add-info-submit-btn { color: #ffffff; }
         #add-info-submit-btn:hover { opacity: 0.9; }
 
         #examples-modal .modal-content { max-width: 600px; }
@@ -223,7 +236,16 @@
         #examples-modal h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: 0.5rem; }
         #examples-modal .modal-footer { border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1.5rem; text-align: right; }
         #examples-modal .close-button-footer { padding: 0.75rem 1.5rem; border-radius: 20px; background-color: var(--card-color); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s ease; }
-        #examples-modal .close-button-footer:hover { background-color: rgba(255, 255, 255, 0.05); }
+        #examples-modal .close-button-footer:hover { background-color: rgba(128, 128, 128, 0.1); }
+        
+        /* --- Activity Modal --- */
+        #activity-modal .modal-content { max-width: 600px; }
+        #activity-list { list-style: none; max-height: 70vh; overflow-y: auto; }
+        #activity-list li { padding: 0.8rem; border-radius: 8px; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        #activity-list li:last-child { border-bottom: none; }
+        #activity-list li:hover { background-color: rgba(128, 128, 128, 0.1); }
+        #activity-list .activity-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #activity-list .activity-date { font-size: 0.8rem; color: var(--text-secondary); }
 
     </style>
 </head>
@@ -247,6 +269,7 @@
     <div class="modal" id="saved-info-modal"></div>
     <div class="modal" id="add-info-modal"></div>
     <div class="modal" id="examples-modal"></div>
+    <div class="modal" id="activity-modal"></div>
 
     <script type="module">
         // Ensure you have a 'firebase-config.js' file in the same directory
@@ -266,11 +289,12 @@
             document.querySelector('.login-container').innerHTML = `<div class="login-box"><i class="fas fa-brain logo"></i><h1>Welcome to Genex.ai</h1><p>Your intelligent web assistant. Sign in to continue.</p><button class="login-btn google" id="google-login-btn-main"><i class="fab fa-google"></i> Continue with Google</button><button class="login-btn microsoft" id="microsoft-login-btn-main"><i class="fab fa-microsoft"></i> Continue with Microsoft</button><button class="login-btn guest" id="guest-login-btn">Continue as Guest</button></div>`;
             document.querySelector('aside.sidebar').innerHTML = `<div class="sidebar-header"><i class="fas fa-brain logo"></i><h2>Genex.ai</h2></div><button id="new-chat-btn"><i class="fas fa-plus"></i> New Chat</button><div class="recent-chats"><h3>Recent</h3><ul id="chat-history-list"></ul></div><div class="sidebar-footer"><button class="sidebar-btn" id="settings-btn"><i class="fas fa-cog"></i> Settings</button></div>`;
             document.querySelector('main.main-content').innerHTML = `<div class="chat-header"><button class="menu-toggle-btn" id="menu-toggle-btn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-brain logo"></i><span>Genex.ai</span></div></div><div class="profile-container" id="profile-container"><button id="profile-btn"></button><div class="profile-dropdown" id="profile-dropdown"><button class="login-btn google" id="google-login-btn-dropdown"><i class="fab fa-google"></i> Continue with Google</button><button class="login-btn microsoft" id="microsoft-login-btn-dropdown"><i class="fab fa-microsoft"></i> Continue with Microsoft</button><button id="sign-out-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</button></div></div><div class="chat-view" id="chat-view"><div class="chat-content-container" id="chat-content-container"><div class="welcome-container" id="welcome-container"><div class="welcome-message"><h1>Hello, <span class="name" id="user-name"></span></h1><p>What should we do today?</p></div><div class="suggestion-cards"><div class="card" data-prompt="what is the current time?">What is the current time?</div><div class="card" data-prompt="tell me an interesting fact">Tell me an interesting fact</div><div class="card" data-prompt="explain quantum computing simply">Explain quantum computing simply</div><div class="card" data-prompt="write a short poem about the rain">Write a short poem about the rain</div></div></div><div class="chat-history hidden" id="chat-history"></div></div></div><div class="input-area-container"><div class="input-area"><input type="text" id="command-input" placeholder="Ask Genex anything..."><button class="mic-btn" id="mic-btn"><i class="fas fa-microphone"></i></button></div></div>`;
-            document.getElementById('settings-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Settings</h3><button class="modal-close-btn" id="settings-modal-close-btn">&times;</button></div><div class="modal-body"><ul id="settings-list"><li data-action="activity"><i class="fas fa-history"></i> Activity</li><li data-action="voices"><i class="fas fa-volume-high"></i> Voices</li><li data-action="saved-info"><i class="fas fa-user-shield"></i> Saved info</li><li data-action="connected-apps"><i class="fas fa-cubes"></i> Connected apps</li><li data-action="scheduled-actions"><i class="fas fa-clock"></i> Scheduled actions</li><li data-action="public-links"><i class="fas fa-link"></i> Your public links</li><li data-action="theme"><i class="fas fa-palette"></i> Theme</li></ul></div></div>`;
+            document.getElementById('settings-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3 id="settings-title">Settings</h3><button class="modal-close-btn" id="settings-modal-close-btn">&times;</button></div><div class="modal-body"><div id="settings-main-view"><ul id="settings-list"><li data-action="activity"><i class="fas fa-history"></i> Activity</li><li data-action="voices"><i class="fas fa-volume-high"></i> Voices</li><li data-action="saved-info"><i class="fas fa-user-shield"></i> Saved info</li><li data-action="connected-apps"><i class="fas fa-cubes"></i> Connected apps</li><li data-action="scheduled-actions"><i class="fas fa-clock"></i> Scheduled actions</li><li data-action="public-links"><i class="fas fa-link"></i> Your public links</li><li data-action="theme"><i class="fas fa-palette"></i> Theme</li></ul></div><div id="settings-theme-view" class="hidden"><h3><button id="settings-back-btn"><i class="fas fa-arrow-left"></i></button> Theme</h3><div class="theme-option-group"><div class="theme-option"><input type="radio" name="theme" value="system" id="theme-system"><label for="theme-system">System</label></div><div class="theme-option"><input type="radio" name="theme" value="light" id="theme-light"><label for="theme-light">Light</label></div><div class="theme-option"><input type="radio" name="theme" value="dark" id="theme-dark"><label for="theme-dark">Dark</label></div></div></div></div></div>`;
             document.getElementById('voices-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Select a Voice</h3><button class="modal-close-btn" id="voices-modal-close-btn">&times;</button></div><div class="modal-body"><div id="voice-list"><p>Loading voices...</p></div></div></div>`;
             document.getElementById('saved-info-modal').innerHTML = `<div class="saved-info-container"><div class="saved-info-header"><div class="saved-info-header-left"><h2>Info that you asked Genex to save <i class="fas fa-info-circle info-icon"></i></h2><p>Share info about your life and preferences to get more helpful responses. Add new info here or ask Genex to remember something during a chat.</p></div><label class="toggle-switch"><input type="checkbox" id="saved-info-toggle" checked><span class="slider"></span></label></div><div class="saved-info-actions"><button class="saved-info-btn primary" id="add-info-btn"><i class="fas fa-plus"></i> Add</button><button class="saved-info-btn" id="show-examples-btn">Show examples</button></div><ul id="saved-info-list"><p class="empty-saved-info" id="empty-saved-info-message">You haven't asked Genex to save anything about you yet</p></ul></div>`;
             document.getElementById('add-info-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>What do you want Genex to remember?</h3><button class="modal-close-btn" id="add-info-modal-close-btn">&times;</button></div><div class="modal-body"><textarea id="add-info-textarea" placeholder="For example, 'I prefer short, concise responses'"></textarea><div id="add-info-actions"><button id="add-info-cancel-btn">Cancel</button><button id="add-info-submit-btn">Submit</button></div></div></div>`;
             document.getElementById('examples-modal').innerHTML = `<div class="modal-content"><div class="modal-body"><button class="examples-close-btn" id="examples-modal-close-btn-x">&times;</button><h3>Examples</h3><ul><li>Use simple language and avoid jargon</li><li>I'm vegetarian, so don't suggest recipes with meat</li><li>After responding, include a Spanish translation</li><li>When planning a trip, include the cost per day</li><li>I can only write code in JavaScript</li><li>I prefer short, concise responses</li></ul><div class="modal-footer"><button class="close-button-footer" id="examples-modal-close-btn-footer">Close</button></div></div></div>`;
+            document.getElementById('activity-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h3>Activity</h3><button class="modal-close-btn" id="activity-modal-close-btn">&times;</button></div><div class="modal-body"><ul id="activity-list"></ul></div></div>`;
 
             const auth = await authPromise;
 
@@ -300,10 +324,19 @@
             const settingsBtn = document.getElementById('settings-btn');
             const settingsModal = document.getElementById('settings-modal');
             const settingsModalCloseBtn = document.getElementById('settings-modal-close-btn');
+            const settingsMainView = document.getElementById('settings-main-view');
+            const settingsThemeView = document.getElementById('settings-theme-view');
+            const settingsBackBtn = document.getElementById('settings-back-btn');
+            const settingsList = document.getElementById('settings-list');
+            const themeOptions = document.querySelectorAll('input[name="theme"]');
+
             const voicesModal = document.getElementById('voices-modal');
             const voicesModalCloseBtn = document.getElementById('voices-modal-close-btn');
             const voiceListContainer = document.getElementById('voice-list');
-            const settingsList = document.getElementById('settings-list');
+
+            const activityModal = document.getElementById('activity-modal');
+            const activityModalCloseBtn = document.getElementById('activity-modal-close-btn');
+            const activityList = document.getElementById('activity-list');
 
             const savedInfoModal = document.getElementById('saved-info-modal');
             const addInfoBtn = document.getElementById('add-info-btn');
@@ -336,37 +369,15 @@
 
             // --- App Launcher Mappings ---
             const appMappings = {
-                'youtube': {
-                    displayName: 'YouTube',
-                    url: 'https://www.youtube.com',
-                    mobileScheme: 'youtube://'
-                },
-                'free fire': {
-                    displayName: 'Free Fire',
-                    url: 'https://ff.garena.com/', // Desktop fallback
-                    mobileScheme: 'intent://#Intent;package=com.dts.freefireth;end' // For Android
-                },
-                'google': {
-                    displayName: 'Google',
-                    url: 'https://www.google.com',
-                    mobileScheme: 'https://www.google.com'
-                },
-                'whatsapp': {
-                    displayName: 'WhatsApp',
-                    url: 'https://web.whatsapp.com',
-                    mobileScheme: 'whatsapp://'
-                },
-                'instagram': {
-                    displayName: 'Instagram',
-                    url: 'https://www.instagram.com',
-                    mobileScheme: 'instagram://'
-                }
+                'youtube': { displayName: 'YouTube', url: 'https://www.youtube.com', mobileScheme: 'youtube://' },
+                'free fire': { displayName: 'Free Fire', url: 'https://ff.garena.com/', mobileScheme: 'intent://#Intent;package=com.dts.freefireth;end' },
+                'google': { displayName: 'Google', url: 'https://www.google.com', mobileScheme: 'https://www.google.com' },
+                'whatsapp': { displayName: 'WhatsApp', url: 'https://web.whatsapp.com', mobileScheme: 'whatsapp://' },
+                'instagram': { displayName: 'Instagram', url: 'https://www.instagram.com', mobileScheme: 'instagram://' }
             };
 
             // --- Helper Functions ---
-            function isMobileDevice() {
-                return /Mobi/i.test(navigator.userAgent);
-            }
+            function isMobileDevice() { return /Mobi/i.test(navigator.userAgent); }
 
             // --- Login / Logout Logic ---
             function showLoginPage() { loginContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
@@ -419,26 +430,9 @@
             function switchToWelcomeView() { currentChatId = null; chatHistory.innerHTML = ''; welcomeContainer.classList.remove('hidden'); chatHistory.classList.add('hidden'); renderSidebar(); }
             
             // --- Voice Synthesis & Selection Logic ---
-            function populateVoices() {
-                voices = synth.getVoices().filter(voice => voice.lang.startsWith('en'));
-                const savedVoiceName = localStorage.getItem('selectedVoiceName');
-                let voiceHTML = '';
-                voices.forEach(voice => {
-                    const isChecked = voice.name === savedVoiceName ? 'checked' : '';
-                    voiceHTML += `
-                        <div class="voice-option">
-                            <input type="radio" name="voice" value="${voice.name}" id="${voice.name}" ${isChecked}>
-                            <label for="${voice.name}">${voice.name} (${voice.lang})</label>
-                            <button class="voice-play-btn" data-voice-name="${voice.name}"><i class="fas fa-play"></i></button>
-                        </div>`;
-                });
-                voiceListContainer.innerHTML = voiceHTML || '<p>No English voices found.</p>';
-            }
-
+            function populateVoices() { voices = synth.getVoices().filter(voice => voice.lang.startsWith('en')); const savedVoiceName = localStorage.getItem('selectedVoiceName'); let voiceHTML = ''; voices.forEach(voice => { const isChecked = voice.name === savedVoiceName ? 'checked' : ''; voiceHTML += `<div class="voice-option"><input type="radio" name="voice" value="${voice.name}" id="${voice.name.replace(/\s/g, '')}" ${isChecked}><label for="${voice.name.replace(/\s/g, '')}">${voice.name} (${voice.lang})</label><button class="voice-play-btn" data-voice-name="${voice.name}"><i class="fas fa-play"></i></button></div>`; }); voiceListContainer.innerHTML = voiceHTML || '<p>No English voices found.</p>'; }
             populateVoices();
-            if (synth.onvoiceschanged !== undefined) {
-                synth.onvoiceschanged = populateVoices;
-            }
+            if (synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = populateVoices; }
             
             voiceListContainer.addEventListener('click', (e) => {
                 if (e.target.closest('.voice-play-btn')) {
@@ -459,19 +453,14 @@
             });
 
             function talk(text, saveMessage = true) {
-                if (saveMessage) {
-                    appendMessage('Genex', text);
-                }
+                if (saveMessage) { appendMessage('Genex', text); }
                 synth.cancel();
                 const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, '');
                 const utterance = new SpeechSynthesisUtterance(cleanedText);
-                
                 const savedVoiceName = localStorage.getItem('selectedVoiceName');
                 if (savedVoiceName) {
                     const selectedVoice = voices.find(v => v.name === savedVoiceName);
-                    if (selectedVoice) {
-                        utterance.voice = selectedVoice;
-                    }
+                    if (selectedVoice) { utterance.voice = selectedVoice; }
                 }
                 synth.speak(utterance);
             }
@@ -482,27 +471,15 @@
                 const senderName = sender === 'User' ? (user?.isAnonymous ? "Guest" : (user?.displayName ? user.displayName.split(' ')[0] : "User")) : 'Genex';
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('chat-message', sender === 'User' ? 'user-message' : 'genex-message');
-                const senderP = document.createElement('p');
-                senderP.classList.add('sender');
-                senderP.textContent = senderName;
-                const contentDiv = document.createElement('div');
-                contentDiv.classList.add('message-content');
-
-                if (sender === 'Genex') {
-                    contentDiv.innerHTML = marked.parse(text);
-                } else {
-                    const p = document.createElement('p');
-                    p.textContent = text;
-                    contentDiv.appendChild(p);
-                }
-
-                messageDiv.appendChild(senderP);
-                messageDiv.appendChild(contentDiv);
+                messageDiv.innerHTML = `<p class="sender">${senderName}</p><div class="message-content"></div>`;
+                const contentDiv = messageDiv.querySelector('.message-content');
+                
+                contentDiv.innerHTML = sender === 'Genex' ? marked.parse(text) : `<p>${text}</p>`;
+                
                 chatHistory.appendChild(messageDiv);
-                if (sender === 'Genex') {
-                    enhanceCodeBlocks(contentDiv);
-                }
+                if (sender === 'Genex') { enhanceCodeBlocks(contentDiv); }
                 chatView.scrollTop = chatView.scrollHeight;
+                
                 if (save && currentChatId) {
                     const chats = getChats();
                     const chat = chats.find(c => c.id === currentChatId);
@@ -516,13 +493,9 @@
                 }
             }
 
-            // --- FIXED: run_genex with improved App Launcher and AI response handling ---
             async function run_genex(command) {
                 if (!command) return;
                 commandInput.value = '';
-
-                // 1. Check for local "open" command first
-                // This regex is more flexible and captures the app name
                 const appNamesRegex = Object.keys(appMappings).join('|');
                 const openCommandRegex = new RegExp(`(?:open|launch)\\s+(${appNamesRegex})`, 'i');
                 const match = command.trim().match(openCommandRegex);
@@ -530,22 +503,16 @@
                 if (match) {
                     const appNameToOpen = match[1].toLowerCase();
                     const app = appMappings[appNameToOpen];
-
                     if (app) {
                         switchToChatView(false);
                         appendMessage('User', command);
                         talk(`Opening ${app.displayName}...`, true);
-                        
-                        if (isMobileDevice()) {
-                            window.location.href = app.mobileScheme;
-                        } else {
-                            window.open(app.url, '_blank');
-                        }
-                        return; // Command handled, exit function
+                        if (isMobileDevice()) { window.location.href = app.mobileScheme; } 
+                        else { window.open(app.url, '_blank'); }
+                        return;
                     }
                 }
 
-                // 2. If not a local command, proceed with AI chat
                 switchToChatView(false); 
                 if (!currentChatId) { 
                     currentChatId = Date.now().toString(); 
@@ -575,27 +542,19 @@
                     
                     if (data.candidates && data.candidates.length > 0) { 
                         const aiText = data.candidates[0].content.parts[0].text;
-                        
-                        // 3. Try to parse the AI response for an action
                         try {
                             const parsedResponse = JSON.parse(aiText);
-                            // Check if it's an array with an action object
                             if (Array.isArray(parsedResponse) && parsedResponse.length > 0) {
                                 const actionObject = parsedResponse[0];
                                 if (actionObject.action === 'open_url' && actionObject.url) {
                                     const hostname = new URL(actionObject.url).hostname.replace('www.','');
                                     talk(`Sure, opening ${hostname}`, true);
                                     window.open(actionObject.url, '_blank');
-                                    return; // Action handled
+                                    return;
                                 }
                             }
-                        } catch (e) {
-                            // It's not a JSON action, so just treat it as regular text
-                        }
-                        
-                        // If no action was parsed, just speak and display the text
+                        } catch (e) { /* Not a JSON action */ }
                         talk(aiText, true);
-
                     } else { 
                         talk("I'm sorry, I couldn't generate a response. Please try again.", true); 
                     } 
@@ -606,7 +565,7 @@
                 } 
             }
             
-            // --- Sidebar & Modal Logic (No changes needed here) ---
+            // --- Sidebar & Modal Logic ---
             function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
             function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
             menuToggleBtn.addEventListener('click', openSidebar);
@@ -615,12 +574,119 @@
             function openModal(modal) { modal.classList.add('active'); }
             function closeModal(modal) { modal.classList.remove('active'); }
 
-            settingsBtn.addEventListener('click', () => openModal(settingsModal));
+            settingsBtn.addEventListener('click', () => {
+                settingsMainView.classList.remove('hidden');
+                settingsThemeView.classList.add('hidden');
+                openModal(settingsModal);
+            });
             settingsModalCloseBtn.addEventListener('click', () => closeModal(settingsModal));
             settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeModal(settingsModal); });
+            
             voicesModalCloseBtn.addEventListener('click', () => closeModal(voicesModal));
             voicesModal.addEventListener('click', (e) => { if (e.target === voicesModal) closeModal(voicesModal); });
-            settingsList.querySelector('[data-action="voices"]').addEventListener('click', () => { closeModal(settingsModal); openModal(voicesModal); });
+            
+            // --- Activity Modal Logic ---
+            function renderActivityHistory() {
+                const chats = getChats();
+                activityList.innerHTML = '';
+                if (chats.length === 0) {
+                    activityList.innerHTML = '<p>No activity yet.</p>';
+                    return;
+                }
+                chats.slice().reverse().forEach(chat => {
+                    const li = document.createElement('li');
+                    li.dataset.chatId = chat.id;
+                    const date = new Date(parseInt(chat.id)).toLocaleString();
+                    li.innerHTML = `<div class="activity-title">${chat.title}</div><div class="activity-date">${date}</div>`;
+                    activityList.appendChild(li);
+                });
+            }
+            activityModalCloseBtn.addEventListener('click', () => closeModal(activityModal));
+            activityModal.addEventListener('click', (e) => { if (e.target === activityModal) closeModal(activityModal); });
+            activityList.addEventListener('click', e => {
+                const li = e.target.closest('li');
+                if (li && li.dataset.chatId) {
+                    renderChat(li.dataset.chatId);
+                    closeModal(activityModal);
+                }
+            });
+
+
+            // --- Settings List Logic ---
+            settingsList.addEventListener('click', (e) => {
+                const action = e.target.closest('li')?.dataset.action;
+                if (!action) return;
+
+                switch (action) {
+                    case 'activity':
+                        renderActivityHistory();
+                        closeModal(settingsModal);
+                        openModal(activityModal);
+                        break;
+                    case 'voices':
+                        closeModal(settingsModal);
+                        openModal(voicesModal);
+                        break;
+                    case 'saved-info':
+                        document.getElementById('saved-info-toggle').checked = getSavedInfoEnabled();
+                        renderSavedInfoList();
+                        closeModal(settingsModal);
+                        openModal(savedInfoModal);
+                        break;
+                    case 'theme':
+                        settingsMainView.classList.add('hidden');
+                        settingsThemeView.classList.remove('hidden');
+                        break;
+                    default:
+                        const placeholders = {
+                            'connected-apps': "Placeholder: Manage your connected applications here.",
+                            'scheduled-actions': "Placeholder: View and manage scheduled actions or reminders.",
+                            'public-links': "Placeholder: Manage links you've shared publicly from Genex."
+                        };
+                        if (placeholders[action]) {
+                            alert(placeholders[action]);
+                        }
+                        break;
+                }
+            });
+
+            // --- Theme Selection Logic ---
+            const userTheme = localStorage.getItem('theme');
+            const systemThemeDark = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            const applyTheme = (theme) => {
+                document.documentElement.classList.remove('light-theme');
+                if (theme === 'light') {
+                    document.documentElement.classList.add('light-theme');
+                } else if (theme === 'system' && !systemThemeDark.matches) {
+                    document.documentElement.classList.add('light-theme');
+                }
+            };
+            
+            systemThemeDark.addEventListener('change', e => {
+                if (localStorage.getItem('theme') === 'system') {
+                    applyTheme('system');
+                }
+            });
+            
+            themeOptions.forEach(option => {
+                option.addEventListener('change', () => {
+                    const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+                    localStorage.setItem('theme', selectedTheme);
+                    applyTheme(selectedTheme);
+                });
+            });
+            
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            document.querySelector(`input[name="theme"][value="${savedTheme}"]`).checked = true;
+            applyTheme(savedTheme);
+
+            settingsBackBtn.addEventListener('click', () => {
+                settingsThemeView.classList.add('hidden');
+                settingsMainView.classList.remove('hidden');
+            });
+
+            // --- Saved Info Modal Logic ---
             const SAVED_INFO_KEY_PREFIX = 'genexSavedInfo_';
             const SAVED_INFO_ENABLED_KEY_PREFIX = 'genexSavedInfoEnabled_';
             function getSavedInfo() { return JSON.parse(localStorage.getItem(SAVED_INFO_KEY_PREFIX + auth.currentUser?.uid) || '[]'); }
@@ -630,7 +696,6 @@
             function renderSavedInfoList() { const infoItems = getSavedInfo(); savedInfoList.innerHTML = ''; if (infoItems.length === 0) { emptySavedInfoMessage.classList.remove('hidden'); } else { emptySavedInfoMessage.classList.add('hidden'); infoItems.forEach((item, index) => { const li = document.createElement('li'); li.innerHTML = `<span>${item}</span><button class="remove-info-btn" data-index="${index}"><i class="fas fa-times"></i></button>`; savedInfoList.appendChild(li); }); } }
             savedInfoList.addEventListener('click', (e) => { const btn = e.target.closest('.remove-info-btn'); if (btn) { const indexToRemove = parseInt(btn.dataset.index); let infoItems = getSavedInfo(); infoItems.splice(indexToRemove, 1); saveSavedInfo(infoItems); } });
             document.getElementById('saved-info-toggle').addEventListener('change', (e) => setSavedInfoEnabled(e.target.checked));
-            settingsList.querySelector('[data-action="saved-info"]').addEventListener('click', () => { document.getElementById('saved-info-toggle').checked = getSavedInfoEnabled(); renderSavedInfoList(); closeModal(settingsModal); openModal(savedInfoModal); });
             savedInfoModal.addEventListener('click', (e) => { if (e.target === savedInfoModal) closeModal(savedInfoModal); });
             addInfoBtn.addEventListener('click', () => { addInfoTextarea.value = ''; openModal(addInfoModal); });
             addInfoModalCloseBtn.addEventListener('click', () => closeModal(addInfoModal));
@@ -641,7 +706,7 @@
             examplesModalCloseBtnX.addEventListener('click', () => closeModal(examplesModal));
             examplesModalCloseBtnFooter.addEventListener('click', () => closeModal(examplesModal));
             examplesModal.addEventListener('click', (e) => { if (e.target === examplesModal) closeModal(examplesModal); });
-            settingsList.addEventListener('click', (e) => { const action = e.target.closest('li')?.dataset.action; if (!action) return; const placeholders = { 'activity': "Placeholder: This would show your chat activity history.", 'connected-apps': "Placeholder: Manage your connected applications here.", 'scheduled-actions': "Placeholder: View and manage scheduled actions or reminders.", 'public-links': "Placeholder: Manage links you've shared publicly from Genex.", 'theme': "Placeholder: Choose your preferred theme (e.g., Light/Dark mode)." }; if (placeholders[action]) { alert(placeholders[action]); } });
+
 
             // --- General Event Listeners ---
             micBtn.addEventListener('click', () => { if (isListening) { recognition.stop(); } else { try { recognition.start(); } catch(e) { console.error("Could not start recognition:", e); isListening = false; micBtn.classList.remove('listening'); } } });
@@ -650,7 +715,7 @@
             newChatBtn.addEventListener('click', () => { switchToWelcomeView(); closeSidebar(); });
             chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) { renderChat(li.dataset.chatId); if (window.innerWidth < 768) { closeSidebar(); } } });
         
-            function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; const senderP = document.createElement('p'); senderP.classList.add('sender'); senderP.textContent = 'Genex'; const dotsDiv = document.createElement('div'); dotsDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`; loadingDiv.appendChild(senderP); loadingDiv.appendChild(dotsDiv); chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
+            function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; loadingDiv.innerHTML = `<p class="sender">Genex</p><div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`; chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
             function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
             function enhanceCodeBlocks(container) { const codeBlocks = container.querySelectorAll('pre'); codeBlocks.forEach(pre => { const code = pre.querySelector('code'); if (!code) return; const copyButton = document.createElement('button'); copyButton.className = 'copy-btn'; copyButton.textContent = 'Copy'; pre.appendChild(copyButton); copyButton.addEventListener('click', () => { navigator.clipboard.writeText(code.textContent).then(() => { copyButton.textContent = 'Copied!'; setTimeout(() => { copyButton.textContent = 'Copy'; }, 2000); }).catch(err => { console.error('Failed to copy text: ', err); copyButton.textContent = 'Error'; }); }); }); }
         });
