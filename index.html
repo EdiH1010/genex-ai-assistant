@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF--8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genex.ai - Web Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -932,7 +932,7 @@
                 `;
                 document.getElementById('generate-image-btn').addEventListener('click', simulateImageGeneration);
             }
-
+            
             async function simulateVideoGeneration() {
                 const prompt = document.getElementById('video-prompt-input').value;
                 const file = videoCreatorFileInput.files[0];
@@ -943,30 +943,38 @@
                 const resultContainer = document.getElementById('generation-result');
                 resultContainer.innerHTML = `<p>🎬 Generating your video... this might take a moment.</p>`;
 
-                let imageURL;
-                // Use the uploaded file if it exists, otherwise use a dynamic placeholder.
-                if (file) {
-                    imageURL = URL.createObjectURL(file);
-                } else {
-                    imageURL = `https://picsum.photos/512/384?random=${Date.now()}`;
-                }
-                
+                let visualElementHTML = '';
+                let downloadLink = '';
+
                 // Simulate generation delay
                 setTimeout(async () => {
-                    const watermarkedImageURL = await addWatermark(imageURL, 'Geo');
+                    if (file) {
+                        const fileUrl = URL.createObjectURL(file);
+                        visualElementHTML = `<img src="${fileUrl}" alt="Video Preview Base" style="width: 100%; height: 100%; object-fit: cover;">`;
+                        downloadLink = fileUrl; // For simplicity, allow downloading the base image
+                    } else {
+                        const placeholderImageUrl = `https://picsum.photos/512/384?random=${Date.now()}`;
+                        visualElementHTML = `<img src="${placeholderImageUrl}" alt="Video Placeholder Visual" style="width: 100%; height: 100%; object-fit: cover;">`;
+                        downloadLink = placeholderImageUrl;
+                    }
+                    
                     resultContainer.innerHTML = `
                         <h3>Preview</h3>
-                        <div class="preview-container">
-                            <img src="${watermarkedImageURL}" alt="Video Preview">
-                            <div class="watermark">Geo</div>
+                        <div class="preview-container" style="position: relative; width: 512px; height: 384px; margin: 0 auto; overflow: hidden; background-color: black;">
+                            ${visualElementHTML}
+                            <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background-color: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; text-align: center;">
+                                ${prompt}
+                            </div>
+                            <div class="watermark" style="position: absolute; bottom: 5px; right: 5px; font-size: 0.8em; color: rgba(255,255,255,0.7);">Geo</div>
                         </div>
-                        <a href="${watermarkedImageURL}" download="geo-video-preview.png" class="creator-btn download-btn">
-                           <i class="fas fa-download"></i> Download
+                        <a href="${downloadLink}" download="geo-video-preview.jpg" class="creator-btn download-btn">
+                           <i class="fas fa-download"></i> Download Preview
                         </a>
                     `;
+
                     // If the URL was created from a local file, revoke it to free up memory.
                     if (file) {
-                        URL.revokeObjectURL(imageURL);
+                        URL.revokeObjectURL(downloadLink);
                     }
                 }, 2500);
             }
@@ -982,8 +990,8 @@
 
                 // Simulate generation delay
                 setTimeout(async () => {
-                    // Use a placeholder image API for variety
-                    const placeholderImageUrl = `https://picsum.photos/512/512?random=${Date.now()}`;
+                    // Use a placeholder image API for variety, seeded by the prompt
+                    const placeholderImageUrl = `https://picsum.photos/seed/${encodeURIComponent(prompt)}/512/512`;
                     const watermarkedImageURL = await addWatermark(placeholderImageUrl, 'Geo');
                     resultContainer.innerHTML = `
                         <h3>Result</h3>
