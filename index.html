@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF--8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genex.ai - Web Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -106,7 +106,7 @@
         .card { background-color: var(--card-color); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s ease; font-size: 0.95rem; font-weight: 500; text-align: left; }
         .card:hover { background-color: rgba(128, 128, 128, 0.1); }
         .chat-header { position: absolute; top: 1.5rem; left: 1.5rem; z-index: 10; display: flex; align-items: center; }
-        .header-logo { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; font-weight: 500; }
+        .header-logo { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; font-weight: 500; cursor: pointer; }
         .header-logo .logo { font-size: 1.2rem; }
         .chat-history { width: 100%; display: flex; flex-direction: column; }
         .chat-message { display: flex; flex-direction: column; margin-bottom: 1rem; max-width: 85%; padding: 0.75rem 1rem; border-radius: 18px; word-wrap: break-word; }
@@ -132,19 +132,19 @@
         .mic-btn.listening { color: var(--accent-primary); animation: pulsate-mic 1.5s infinite; }
         @keyframes pulsate-mic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         
-        /* --- NEW: Pop-up Menus for + and Tools --- */
+        /* --- Pop-up Menus for + and Tools --- */
         .popup-menu { position: absolute; background-color: var(--modal-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 100; padding: 0.5rem; min-width: 200px; }
         .popup-menu-item { list-style: none; padding: 0.75rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem; }
         .popup-menu-item:hover { background-color: rgba(128, 128, 128, 0.1); }
         .popup-menu-item i { width: 20px; text-align: center; }
 
-        /* --- NEW: Attached File Thumbnail --- */
+        /* --- Attached File Thumbnail --- */
         .attached-file-preview { margin-bottom: 0.5rem; background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; display: flex; align-items: center; gap: 0.75rem; max-width: 300px; }
         .attached-file-preview img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
         .attached-file-preview span { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .attached-file-preview button { background: none; border: none; color: var(--text-secondary); font-size: 1rem; cursor: pointer; margin-left: auto; }
 
-        /* --- NEW: Image/Video Creator Views --- */
+        /* --- Image/Video Creator Views --- */
         .creator-view { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.5rem; padding: 2rem 0; }
         .creator-view h2 { font-size: 2rem; }
         .creator-view p { color: var(--text-secondary); max-width: 500px; }
@@ -196,7 +196,7 @@
         .modal-close-btn:hover { color: var(--text-primary); }
         .modal-body { padding: 0 1rem 1rem 1rem; }
         
-        /* --- NEW: Drive Modal --- */
+        /* --- Drive Modal --- */
         #drive-modal .modal-content { max-width: 800px; height: 80vh; }
         #drive-modal .modal-body { height: calc(100% - 70px); }
         .drive-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
@@ -330,6 +330,7 @@
 
     <script type="module">
         // Ensure you have a 'firebase-config.js' file in the same directory
+        // Example: export const authPromise = Promise.resolve(getAuth(initializeApp({ apiKey: "...", ... })));
         import { authPromise } from './firebase-config.js'; 
         import { 
             onAuthStateChanged, 
@@ -886,20 +887,19 @@
             createVideoBtn.addEventListener('click', () => showMainView('video'));
             createImageBtn.addEventListener('click', () => showMainView('image'));
             headerLogo.addEventListener('click', () => {
-                 if (welcomeContainer.classList.contains('hidden') && chatHistory.classList.contains('hidden')) {
+                 if (welcomeContainer.classList.contains('hidden') || !chatHistory.classList.contains('hidden') || !videoCreatorView.classList.contains('hidden') || !imageCreatorView.classList.contains('hidden')) {
                      switchToWelcomeView();
                  }
             });
 
-
             function renderVideoCreator() {
                 videoCreatorView.innerHTML = `
                     <h2>Create video with Geo</h2>
-                    <p>Bring ideas to life in an 8-second video with sound. Describe a scene and add details like visual style and background music.</p>
+                    <p>Bring ideas to life in an 8-second video with sound. Describe a scene and optionally add a photo to guide the creation.</p>
                     <div class="creator-input-area">
                         <div class="upload-box" id="video-upload-box">
                             <i class="fas fa-camera"></i>
-                            <p>Add a photo to start</p>
+                            <p>Add a photo (Optional)</p>
                         </div>
                         <textarea id="video-prompt-input" placeholder="Describe your video... (e.g., 'A futuristic city skyline at night, cinematic, synthwave music')"></textarea>
                     </div>
@@ -936,14 +936,21 @@
             async function simulateVideoGeneration() {
                 const prompt = document.getElementById('video-prompt-input').value;
                 const file = videoCreatorFileInput.files[0];
-                if (!prompt || !file) {
-                    alert("Please provide a source image and a description.");
+                if (!prompt) {
+                    alert("Please provide a description for your video.");
                     return;
                 }
                 const resultContainer = document.getElementById('generation-result');
                 resultContainer.innerHTML = `<p>🎬 Generating your video... this might take a moment.</p>`;
+
+                let imageURL;
+                // Use the uploaded file if it exists, otherwise use a dynamic placeholder.
+                if (file) {
+                    imageURL = URL.createObjectURL(file);
+                } else {
+                    imageURL = `https://picsum.photos/512/384?random=${Date.now()}`;
+                }
                 
-                const imageURL = URL.createObjectURL(file);
                 // Simulate generation delay
                 setTimeout(async () => {
                     const watermarkedImageURL = await addWatermark(imageURL, 'Geo');
@@ -957,7 +964,10 @@
                            <i class="fas fa-download"></i> Download
                         </a>
                     `;
-                    URL.revokeObjectURL(imageURL); // Clean up
+                    // If the URL was created from a local file, revoke it to free up memory.
+                    if (file) {
+                        URL.revokeObjectURL(imageURL);
+                    }
                 }, 2500);
             }
 
