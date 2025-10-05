@@ -62,7 +62,14 @@
         
         /* --- App Layout --- */
         .app-container { display: flex; height: 100%; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
+        .main-content {
+            flex-grow: 1;
+            width: 0; /* Fix Applied Here */
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
 
         /* --- Sidebar --- */
         .sidebar { width: 250px; background-color: var(--sidebar-color); padding: 1.5rem 1rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); }
@@ -296,16 +303,16 @@
 <body>
     
     <div class="login-container" id="login-container">
-        </div>
+    </div>
 
     <div class="app-container hidden" id="app-container">
         <aside class="sidebar" id="sidebar">
-            </aside>
+        </aside>
 
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
         <main class="main-content">
-            </main>
+        </main>
     </div>
 
     <div class="modal" id="settings-modal"></div>
@@ -888,7 +895,7 @@
             createImageBtn.addEventListener('click', () => showMainView('image'));
             headerLogo.addEventListener('click', () => {
                  if (welcomeContainer.classList.contains('hidden') || !chatHistory.classList.contains('hidden') || !videoCreatorView.classList.contains('hidden') || !imageCreatorView.classList.contains('hidden')) {
-                     switchToWelcomeView();
+                       switchToWelcomeView();
                  }
             });
 
