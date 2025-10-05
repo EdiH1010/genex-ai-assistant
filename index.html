@@ -701,6 +701,30 @@
             
             function openModal(modal) { modal.classList.add('active'); }
             function closeModal(modal) { modal.classList.remove('active'); }
+            
+            // --- NEW: Back Button Handling Logic ---
+            function handleBackButton() {
+                // Priority 1: Close any active modal
+                const activeModal = document.querySelector('.modal.active');
+                if (activeModal) {
+                    closeModal(activeModal);
+                    return; // Action handled, so we stop here.
+                }
+
+                // Priority 2: Close the slide-out sidebar
+                if (sidebar.classList.contains('open')) {
+                    closeSidebar();
+                    return; // Action handled
+                }
+
+                // Priority 3: If in a chat or creator view, go back to the welcome screen
+                if (welcomeContainer.classList.contains('hidden')) {
+                    switchToWelcomeView();
+                    return; // Action handled
+                }
+
+                // If none of the above, do nothing, let the user switch apps manually.
+            }
 
             settingsBtn.addEventListener('click', () => {
                 settingsMainView.classList.remove('hidden');
@@ -824,7 +848,6 @@
                     const rect = button.getBoundingClientRect();
                     menu.style.bottom = (window.innerHeight - rect.top) + 'px';
 
-                    // *** THIS IS THE NEW RESPONSIVE FIX ***
                     // Check if it's the tools menu AND if we're on a mobile-sized screen
                     if (menu.id === 'tools-menu' && window.innerWidth <= 767) {
                         // On mobile, align this menu to the right to keep it on-screen
@@ -1072,6 +1095,17 @@
             function showLoadingIndicator() { const loadingDiv = document.createElement('div'); loadingDiv.classList.add('chat-message', 'genex-message', 'loading-indicator'); loadingDiv.id = 'loading-indicator'; loadingDiv.innerHTML = `<p class="sender">Genex</p><div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`; chatHistory.appendChild(loadingDiv); chatView.scrollTop = chatView.scrollHeight; }
             function removeLoadingIndicator() { const indicator = document.getElementById('loading-indicator'); if (indicator) indicator.remove(); }
             function enhanceCodeBlocks(container) { const codeBlocks = container.querySelectorAll('pre'); codeBlocks.forEach(pre => { const code = pre.querySelector('code'); if (!code) return; const copyButton = document.createElement('button'); copyButton.className = 'copy-btn'; copyButton.textContent = 'Copy'; pre.appendChild(copyButton); copyButton.addEventListener('click', () => { navigator.clipboard.writeText(code.textContent).then(() => { copyButton.textContent = 'Copied!'; setTimeout(() => { copyButton.textContent = 'Copy'; }, 2000); }).catch(err => { console.error('Failed to copy text: ', err); copyButton.textContent = 'Error'; }); }); }); }
+            
+            // --- NEW: Back Button Event Listener ---
+            // This hijacks the back button to provide a native-like experience.
+            history.pushState(null, '', location.href); // Create an initial history state
+            window.addEventListener('popstate', function (event) {
+                // When the back button is pressed, this event fires.
+                // We push the state again to "catch" the navigation, preventing the user from leaving the page.
+                history.pushState(null, '', location.href);
+                // Then, we run our custom handler to decide what UI element to close.
+                handleBackButton();
+            });
         });
     </script>
 </body>
