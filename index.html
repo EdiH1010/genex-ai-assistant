@@ -64,7 +64,6 @@
         .app-container { display: flex; height: 100%; }
         .main-content {
             flex-grow: 1;
-            width: 0; /* Fix Applied Here */
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -173,11 +172,16 @@
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .menu-toggle-btn { display: none; background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; margin-right: 1rem; padding: 0.5rem; z-index: 15; }
+        
         @media (max-width: 767px) {
+            .app-container {
+                display: block; /* <-- THE FIX IS HERE */
+            }
             .menu-toggle-btn { display: block; }
             .sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
             .sidebar.open { transform: translateX(0); }
         }
+
         @media (min-width: 768px) {
             .sidebar-overlay { display: none; }
         }
