@@ -593,19 +593,26 @@
                 }
             });
 
-            // --- UPDATED talk FUNCTION (CORE CHANGE) ---
+            // --- UPDATED talk FUNCTION (CORE FIX) ---
             function talk(text, saveMessage = true) {
                 if (saveMessage) { appendMessage('Genex', text); }
                 
-                // Cancel any *currently active* speech to replace it with new speech
+                // 1. Clear any current speech and ensure it's unpaused for the new response.
                 if (synth.speaking || synth.paused) {
                     synth.cancel(); 
                 }
+                synth.resume(); // Ensure the engine is ready to speak
                 
-                // Reset mute button state for new speech
-                isMuted = false;
-                muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
-                muteBtn.classList.add('hidden');
+                // 2. Reset the Mute/Unmute state for the new response.
+                // NOTE: We don't touch isMuted here; the user's preference persists across chat responses.
+                // However, for the initial welcome message, we want it to always be unmuted unless the user clicks mute.
+                // If this is the welcome message (text starts with "Hello"), we force unmuted state.
+                if (text.startsWith("Hello, ")) {
+                    isMuted = false;
+                }
+
+                muteBtn.innerHTML = isMuted ? '<i class="fas fa-volume-high"></i>' : '<i class="fas fa-volume-xmark"></i>';
+                muteBtn.classList.add('hidden'); 
 
                 const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, '');
                 const utterance = new SpeechSynthesisUtterance(cleanedText);
@@ -616,20 +623,19 @@
                     if (selectedVoice) { utterance.voice = selectedVoice; }
                 }
                 
-                // Show the mute button when speech is about to start/processing
+                // 3. Show the mute button when speech starts/is ready to start
                 utterance.onstart = () => {
                     muteBtn.classList.remove('hidden');
-                };
-
-                // Pause the speech immediately if the user's last action was muting
-                utterance.onboundary = (event) => {
-                    if (event.name === 'word' && isMuted) {
-                        // The engine has started speaking the first word; now we pause.
+                    if (isMuted) {
+                        // If the global state is muted, immediately pause the speech.
                         synth.pause();
+                        muteBtn.innerHTML = '<i class="fas fa-volume-high"></i>'; // Show Unmute icon
+                    } else {
+                         muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>'; // Show Mute icon
                     }
                 };
 
-                // Hide the mute button when speech finishes naturally
+                // 4. Hide the mute button only when speech finishes naturally
                 utterance.onend = () => {
                     muteBtn.classList.add('hidden');
                 };
@@ -1133,23 +1139,24 @@
             micBtn.addEventListener('click', () => { if (isListening) { recognition.stop(); } else { try { recognition.start(); } catch(e) { console.error("Could not start recognition:", e); isListening = false; micBtn.classList.remove('listening'); } } });
             commandInput.addEventListener('keydown', e => { if (e.key === 'Enter' && commandInput.value) run_genex(commandInput.value); });
             suggestionCards.addEventListener('click', e => { const card = e.target.closest('.card'); if (card) run_genex(card.dataset.prompt); });
-            newChatBtn.addEventListener('click', () => { switchToWelcomeView(); closeSidebar(); });
+            newChatBtn.addEventListener('click', () => { switchToWelcomeView(); synth.cancel(); closeSidebar(); });
             chatHistoryList.addEventListener('click', e => { const li = e.target.closest('li'); if (li && li.dataset.chatId) { renderChat(li.dataset.chatId); if (window.innerWidth < 768) { closeSidebar(); } } });
             
-            // --- UPDATED Mute Button Listener (CORE CHANGE) ---
+            // --- UPDATED Mute Button Listener (CORE FIX) ---
             muteBtn.addEventListener('click', () => {
                 if (synth.speaking && !synth.paused) {
-                    // Mute: Pause the speech and update state/icon
+                    // Mute: Pause the speech, update state/icon
                     synth.pause();
                     isMuted = true;
-                    muteBtn.innerHTML = '<i class="fas fa-volume-high"></i>'; // Change icon to Unmute
+                    muteBtn.innerHTML = '<i class="fas fa-volume-high"></i>'; // Icon changes to 'Unmute'
                 } else if (synth.paused) {
-                    // Unmute: Resume the speech and update state/icon
+                    // Unmute: Resume the speech from its paused point, update state/icon
                     synth.resume();
                     isMuted = false;
-                    muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>'; // Change icon to Mute
+                    muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>'; // Icon changes back to 'Mute'
                 } else {
-                    // Failsafe: if the button is visible but nothing is playing, just hide it.
+                    // Fail-safe: If not speaking but clicked, ensure isMuted is false and hide.
+                    isMuted = false;
                     muteBtn.classList.add('hidden');
                 }
             });
