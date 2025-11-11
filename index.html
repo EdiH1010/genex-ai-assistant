@@ -319,7 +319,7 @@
 </head>
 <body>
     
-    <div class="login-container" id="login-container">
+    <div class="login-container hidden" id="login-container">
     </div>
 
     <div class="app-container hidden" id="app-container">
@@ -359,7 +359,8 @@
         import { 
             onAuthStateChanged, 
             signInWithPopup,
-            getRedirectResult,
+            signInWithRedirect, // <-- IMPORTED
+            getRedirectResult,  // <-- IMPORTED
             GoogleAuthProvider, 
             OAuthProvider,
             signInAnonymously,
@@ -484,10 +485,12 @@
             function isMobileDevice() { return /Mobi/i.test(navigator.userAgent); }
 
             // --- Login / Logout Logic ---
+            
+            // "FLICKER" FIX: showLoginPage now REMOVES hidden
             function showLoginPage() { loginContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
             function showChatApp(userName) { loginContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); userNameSpan.textContent = userName; renderSidebar(); }
             
-            // This is the main listener. It's good for persistence (page reloads)
+            // This is the main listener. It's good for persistence (page reloads) AND redirect returns
             onAuthStateChanged(auth, user => {
                 if (user) {
                     const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User");
@@ -505,31 +508,22 @@
                 }
             });
 
-            // --- UPDATED SIGN-IN FUNCTIONS (CORE FIX) ---
-            // We manually call showChatApp on success, not *only* relying on onAuthStateChanged
+            // --- SIGN-IN FIX (CORE CHANGE) ---
+            // We call this on load to catch the redirect. onAuthStateChanged will handle the rest.
+            getRedirectResult(auth).catch((error) => {
+                console.error("Error processing redirect result:", error);
+            });
 
+            // UPDATED: Use signInWithRedirect for reliability on deployed sites
             const signInWithGoogle = () => {
                 const provider = new GoogleAuthProvider(); 
-                signInWithPopup(auth, provider)
-                    .then(result => {
-                        // Manually trigger the app show on successful popup sign-in
-                        const user = result.user;
-                        const displayName = user.displayName ? user.displayName.split(' ')[0] : "User";
-                        showChatApp(displayName);
-                    })
-                    .catch(error => console.error("Google sign-in error", error)); 
+                signInWithRedirect(auth, provider).catch(error => console.error("Google sign-in error", error)); 
             };
 
+            // UPDATED: Use signInWithRedirect for reliability on deployed sites
             const signInWithMicrosoft = () => {
                 const provider = new OAuthProvider('microsoft.com'); 
-                signInWithPopup(auth, provider)
-                    .then(result => {
-                        // Manually trigger the app show on successful popup sign-in
-                        const user = result.user;
-                        const displayName = user.displayName ? user.displayName.split(' ')[0] : "User";
-                        showChatApp(displayName);
-                    })
-                    .catch(error => console.error("Microsoft sign-in error", error)); 
+                signInWithRedirect(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); 
             };
             
             // Re-bind listeners after innerHTML injection
