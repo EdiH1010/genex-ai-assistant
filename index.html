@@ -504,7 +504,28 @@
                 }
             });
 
-            getRedirectResult(auth).catch((error) => console.error("Error getting redirect result:", error));
+            // --- MICROSOFT SIGN-IN FIX (CORE CHANGE) ---
+            // Handle the result of a redirect sign-in (especially for Microsoft on mobile)
+            getRedirectResult(auth)
+                .then((result) => {
+                    if (result && result.user) {
+                        // A user just signed in via redirect (e.g., Microsoft on mobile).
+                        // The onAuthStateChanged listener might be too slow or might have already run.
+                        // We'll manually trigger the app view just in case.
+                        const user = result.user;
+                        const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User");
+                        showChatApp(displayName);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting redirect result:", error);
+                    // Handle specific errors if needed
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error(`Redirect Error (${errorCode}): ${errorMessage}`);
+                });
+            // --- END OF FIX ---
+
 
             const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
             const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithPopup(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); };
@@ -593,20 +614,22 @@
                 }
             });
 
-            // --- UPDATED talk FUNCTION (CORE FIX) ---
+            // --- UPDATED talk FUNCTION (CORE FIX 2) ---
             function talk(text, saveMessage = true) {
                 if (saveMessage) { appendMessage('Genex', text); }
                 
-                // 1. Clear any current speech and ensure it's unpaused for the new response.
                 if (synth.speaking || synth.paused) {
                     synth.cancel(); 
                 }
-                synth.resume(); // Ensure the engine is ready to speak
+                synth.resume(); // Ensure engine is unpaused
                 
-                // 2. Reset the Mute/Unmute state for the new response.
-                isMuted = false;
-                // Default start state: Speaking, so show VOLUME HIGH icon to indicate "currently loud"
-                muteBtn.innerHTML = '<i class="fas fa-volume-high"></i>'; 
+                // We reset isMuted to false *only* for the welcome message
+                // Otherwise, user preference (muted/unmuted) persists between responses
+                if (text.startsWith("Hello, ")) {
+                    isMuted = false;
+                }
+
+                muteBtn.innerHTML = isMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-high"></i>';
                 muteBtn.classList.add('hidden'); 
 
                 const cleanedText = text.replace(/[^a-zA-Z0-9\s.,?!'-]/g, '');
@@ -618,11 +641,9 @@
                     if (selectedVoice) { utterance.voice = selectedVoice; }
                 }
                 
-                // 3. Show the mute button when speech starts
                 utterance.onstart = () => {
                     muteBtn.classList.remove('hidden');
                     if (isMuted) {
-                        // If for some reason it WAS muted before starting (rare now due to reset above), enforce it.
                          synth.pause();
                          muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
                     } else {
@@ -630,10 +651,9 @@
                     }
                 };
 
-                // 4. Hide the mute button only when speech finishes naturally
                 utterance.onend = () => {
                     muteBtn.classList.add('hidden');
-                    isMuted = false; // Reset state
+                    // We DON'T reset isMuted here, so the user's choice persists
                 };
 
                 synth.speak(utterance);
