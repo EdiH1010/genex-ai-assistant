@@ -487,6 +487,7 @@
             function showLoginPage() { loginContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
             function showChatApp(userName) { loginContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); userNameSpan.textContent = userName; renderSidebar(); }
             
+            // This is the main listener. It's good for persistence (page reloads)
             onAuthStateChanged(auth, user => {
                 if (user) {
                     const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User");
@@ -504,31 +505,32 @@
                 }
             });
 
-            // --- MICROSOFT SIGN-IN FIX (CORE CHANGE) ---
-            // Handle the result of a redirect sign-in (especially for Microsoft on mobile)
-            getRedirectResult(auth)
-                .then((result) => {
-                    if (result && result.user) {
-                        // A user just signed in via redirect (e.g., Microsoft on mobile).
-                        // The onAuthStateChanged listener might be too slow or might have already run.
-                        // We'll manually trigger the app view just in case.
+            // --- UPDATED SIGN-IN FUNCTIONS (CORE FIX) ---
+            // We manually call showChatApp on success, not *only* relying on onAuthStateChanged
+
+            const signInWithGoogle = () => {
+                const provider = new GoogleAuthProvider(); 
+                signInWithPopup(auth, provider)
+                    .then(result => {
+                        // Manually trigger the app show on successful popup sign-in
                         const user = result.user;
-                        const displayName = user.isAnonymous ? "Guest" : (user.displayName ? user.displayName.split(' ')[0] : "User");
+                        const displayName = user.displayName ? user.displayName.split(' ')[0] : "User";
                         showChatApp(displayName);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error getting redirect result:", error);
-                    // Handle specific errors if needed
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    console.error(`Redirect Error (${errorCode}): ${errorMessage}`);
-                });
-            // --- END OF FIX ---
+                    })
+                    .catch(error => console.error("Google sign-in error", error)); 
+            };
 
-
-            const signInWithGoogle = () => { const provider = new GoogleAuthProvider(); signInWithPopup(auth, provider).catch(error => console.error("Google sign-in error", error)); };
-            const signInWithMicrosoft = () => { const provider = new OAuthProvider('microsoft.com'); signInWithPopup(auth, provider).catch(error => console.error("Microsoft sign-in error", error)); };
+            const signInWithMicrosoft = () => {
+                const provider = new OAuthProvider('microsoft.com'); 
+                signInWithPopup(auth, provider)
+                    .then(result => {
+                        // Manually trigger the app show on successful popup sign-in
+                        const user = result.user;
+                        const displayName = user.displayName ? user.displayName.split(' ')[0] : "User";
+                        showChatApp(displayName);
+                    })
+                    .catch(error => console.error("Microsoft sign-in error", error)); 
+            };
             
             // Re-bind listeners after innerHTML injection
             document.getElementById('google-login-btn-main').addEventListener('click', signInWithGoogle);
@@ -540,6 +542,8 @@
                 synth.cancel(); // Stop speech on sign out
                 signOut(auth).catch(error => console.error("Sign out error", error)); 
             });
+            // --- END OF FIX ---
+
 
             // --- Speech Recognition ---
             recognition.onstart = () => { isListening = true; micBtn.classList.add('listening'); };
